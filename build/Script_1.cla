@@ -1,0 +1,9 @@
+update is
+
+    x is 2;
+
+    if x<3, print("A"); end;
+
+    if x<1, print("B");
+    else print("C"); end;
+end;
