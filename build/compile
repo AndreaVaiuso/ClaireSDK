@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+/usr/local/bin/bison -d "$DIR/parser.y"
+flex "$DIR/lexer.l"
+gcc -o "$DIR/claire" "$DIR/claire.c" "$DIR/lex.yy.c" "$DIR/parser.tab.c" -ll
