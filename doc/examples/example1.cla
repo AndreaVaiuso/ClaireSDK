@@ -1,0 +1,27 @@
+connect rgb #2UOPOJ;
+connect display #OHST5E;
+connect temp #3XOK1Z;
+connect condizionatore #SF1Q9N;
+connect termosifone #LMB4R5;
+
+function gestisciCondizionatore() is
+    display.input?
+    if "caldo", condizionatore.output is 1; termosifone.output is 0; endif;
+    if "mite", condizionatore.output is 0; termosifone.output is 0; endif;
+    if "freddo", condizionatore.output is 0; termosifone.output is 1; endif;
+    end;
+end;
+
+update is
+    t is temp.output;
+    t >10 and t < 20 ?
+    if yes, display.input is "mite"; endif;
+    end;
+    t >= 20 ?
+    if yes, display.input is "caldo"; endif;
+    end;
+    t <=10 ?
+    if yes, display.input is "freddo"; endif;
+    end;
+    gestisciCondizionatore();
+repeat 0.2;

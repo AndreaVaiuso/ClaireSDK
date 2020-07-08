@@ -1,0 +1,45 @@
+connect prox #WV80RH;
+connect light #OWGG0A;
+connect switch #JX8D0O;
+
+function blink(freq) is
+    freq?
+        if 0,
+            light.input is 1;
+            switch.output is 1;
+        endif;
+        if 1,
+            switch.output is 0;
+            light.input is 1;
+            sleep(0.5);
+            light.input is 0;
+            sleep(0.5);
+        endif;
+        if 2,
+            switch.output is 0;
+            light.input is 1;
+            sleep(1);
+            light.input is 0;
+            sleep(1);
+        endif;
+    end;
+end;
+
+update is
+    p is prox.input;
+    p <3?
+        if yes,
+            print("Lamp0");
+            blink(0);
+        endif;
+        else p<5?
+        if yes,
+            print("Lamp1");
+            blink(1);
+        endif;
+        else
+            blink(2);
+            print("Lamp2");
+        end;
+    end;
+repeat 0.2;

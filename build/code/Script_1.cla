@@ -1,0 +1,6 @@
+update is
+	do
+		print(x);
+		increase x by 1;
+	while x<10 repeat;
+end;
