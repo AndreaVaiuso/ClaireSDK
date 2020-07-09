@@ -115,7 +115,7 @@ public class CodePane extends JScrollPane {
 
 		setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
 		tp = new JTextPane(doc);
-		//setTabs(tp,5);
+		setTabs(tp,2);
 		tp.setBorder(BorderFactory.createCompoundBorder(tp.getBorder(), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		tp.setFont(ClaireSDK.settings.codeFont);
 		tp.setForeground(ClaireSDK.settings.plainText);
@@ -164,7 +164,7 @@ public class CodePane extends JScrollPane {
 	public String toString() {
 		return tp.getText();
 	}
-
+/*
 	public static void setTabs( JTextPane textPane, int charactersPerTab){
 		FontMetrics fm = textPane.getFontMetrics( textPane.getFont() );
 		int charWidth = fm.charWidth( 'w' );
@@ -184,5 +184,4 @@ public class CodePane extends JScrollPane {
 		int length = textPane.getDocument().getLength();
 		textPane.getStyledDocument().setParagraphAttributes(0, length, attributes, true);
 	}
-
-}
+*/
