@@ -43,7 +43,6 @@ AST* eval(AST* in){
                     }
                     //Is a simple variable
                 } else {
-                    updatedevice(ptr);
                     retrvalue = ptr->symbol->value;
                 }
                 //Is a vector
@@ -123,7 +122,6 @@ AST* eval(AST* in){
                             exit(1);
                         }
                     }
-                    //Is a simple variable
                 }
                 //Is inside a vector
             } else {
