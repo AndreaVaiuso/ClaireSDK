@@ -427,8 +427,8 @@ AST* eval(AST* in){
                 case BOOLEAN: {
                     if(b->fname == 0){
                         LBOOLEAN* bl = (LBOOLEAN*) v;
-                        if(bl->value == 1) printf(">>true\n");
-                        else printf(">>false\n");
+                        if(bl->value == 1) printf(">>yes\n");
+                        else printf(">>no\n");
                     }
                     if(b->fname == 1){
                         return newfloat(1.0);

@@ -1,0 +1,12 @@
+1591698907345	Encapsulate field 'settingsPanel'
+1591703246449	Encapsulate field 'scrollPane_code'
+1591703627666	Rename field 'scrollPane_code'
+1591703837572	Encapsulate field 'simPanel'
+1591704149188	Encapsulate field 'sensorList'
+1591714383875	Encapsulate field 'sensibility'
+1591718152513	Move compilation unit
+1591718162769	Move compilation unit
+1591718189900	Move compilation unit
+1591728072062	Delete element
+1591777040268	Rename type 'SettingsPanel'
+1592133161758	Rename local variable 'mntmNewMenuItem_2'

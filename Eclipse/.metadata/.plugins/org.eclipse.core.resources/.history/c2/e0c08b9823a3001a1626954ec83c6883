@@ -1,0 +1,88 @@
+package iotsdk;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import java.awt.GridBagLayout;
+import javax.swing.JPanel;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JSplitPane;
+
+public class Application {
+
+	private JFrame frame;
+	private JPanel topPanel;
+	private JPanel mainPanel;
+	private JPanel simPanel;
+	private JPanel codePanel;
+
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Application window = new Application();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public Application() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0};
+		gridBagLayout.rowHeights = new int[]{38, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		frame.getContentPane().setLayout(gridBagLayout);
+		
+		topPanel = new JPanel();
+		topPanel.setBackground(Color.WHITE);
+		GridBagConstraints gbc_topPanel = new GridBagConstraints();
+		gbc_topPanel.insets = new Insets(0, 0, 0, 0);
+		gbc_topPanel.fill = GridBagConstraints.BOTH;
+		gbc_topPanel.gridx = 0;
+		gbc_topPanel.gridy = 0;
+		frame.getContentPane().add(topPanel, gbc_topPanel);
+		
+		mainPanel = new JPanel();
+		mainPanel.setBackground(Color.WHITE);
+		GridBagConstraints gbc_mainPanel = new GridBagConstraints();
+		gbc_mainPanel.fill = GridBagConstraints.BOTH;
+		gbc_mainPanel.gridx = 0;
+		gbc_mainPanel.gridy = 1;
+		frame.getContentPane().add(mainPanel, gbc_mainPanel);
+		GridBagLayout gbl_mainPanel = new GridBagLayout();
+		gbl_mainPanel.columnWidths = new int[]{0, 0, 0};
+		gbl_mainPanel.rowHeights = new int[]{0, 0};
+		gbl_mainPanel.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_mainPanel.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		mainPanel.setLayout(gbl_mainPanel);
+		
+		simPanel = new JPanel();
+		simPanel.setBackground(Color.WHITE);
+		GridBagConstraints gbc_simPanel = new GridBagConstraints();
+		gbc_simPanel.insets = new Insets(0, 0, 0, 5);
+		gbc_simPanel.fill = GridBagConstraints.BOTH;
+		gbc_simPanel.gridx = 0;
+		gbc_simPanel.gridy = 0;
+		mainPanel.add(simPanel, gbc_simPanel);
+		
+		codePanel = new JPanel();
+		codePanel.setBackground(Color.WHITE);
+		GridBagConstraints gbc_codePanel = new GridBagConstraints();
+		gbc_codePanel.fill = GridBagConstraints.BOTH;
+		gbc_codePanel.gridx = 1;
+		gbc_codePanel.gridy = 0;
+		mainPanel.add(codePanel, gbc_codePanel);
+	}
+
+
+}

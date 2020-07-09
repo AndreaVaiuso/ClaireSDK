@@ -1,0 +1,51 @@
+package iotsdk;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.swing.BorderFactory;
+import javax.swing.JScrollBar;
+import javax.swing.JTextPane;
+
+public class Terminal extends JTextPane {
+	
+	private static final long serialVersionUID = 8625740610346908620L;
+	
+	public Terminal() {
+		setEditable(false);
+		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		setFont(new Font("Courier New", Font.BOLD, 12));
+		setForeground(ClaireSDK.settings.plainTextCode);
+		setBackground(ClaireSDK.settings.terminalbkg);
+	}
+
+	public void append(String str) {
+		setText(getText()+str+"\n");
+		setCaretPosition(getDocument().getLength());
+	}
+	public void print(String str) {
+		setText(getText()+str);
+		setCaretPosition(getDocument().getLength());
+	}
+	public void br() {
+		append("\n");
+	}
+	public void appendError(String str) {
+		append("Error: " + str);
+		Toolkit.getDefaultToolkit().beep();
+	}
+	public void printException(Exception e) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		appendError(sw.toString());
+	}
+	public void clear() {
+		setText("");
+	}
+
+}

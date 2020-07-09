@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;ButtonSensor.java&apos; to &apos;iotsdk/src/iotsdk.sensors&apos;&#x0A;- Original project: &apos;iotsdk&apos;&#x0A;- Destination element: &apos;iotsdk/src/iotsdk.sensors&apos;&#x0A;- Original element: &apos;iotsdk.sensors.ButtonSensor.java&apos;" description="Copy compilation unit" destination="/src&lt;iotsdk.sensors" element1="/src&lt;iotsdk.sensors{ButtonSensor.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1593007048116" units="1" version="1.0"/>
+</session>

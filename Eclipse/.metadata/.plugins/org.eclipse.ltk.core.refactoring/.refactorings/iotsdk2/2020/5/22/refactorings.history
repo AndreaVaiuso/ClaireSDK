@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from project &apos;iotsdk2&apos;&#x0A;- Original project: &apos;iotsdk2&apos;&#x0A;- Original element: &apos;ApplicationWindow.fxtemplate&apos;" description="Delete element" element1="src/iotsdk2/ApplicationWindow.fxtemplate" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="1" stamp="1590920154713" subPackages="false" version="1.0"/>
+</session>

@@ -1,0 +1,314 @@
+package iotsdk.windows;
+
+import javax.swing.JFrame;
+import java.awt.Window.Type;
+import java.awt.GridBagLayout;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import java.awt.Font;
+import javax.swing.JPanel;
+
+import iotsdk.Application;
+import iotsdk.ClaireSDK;
+import iotsdk.SelAction;
+
+import java.awt.Insets;
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.awt.event.ActionEvent;
+import javax.swing.JTabbedPane;
+
+public class SettingsWindow extends JFrame {
+	
+	private Color newColor;
+	private JLabel colorLabel;
+	private JComboBox<SelAction> comboBox;
+	private JComboBox<SelAction> colorSchemeBox;
+	private JComboBox<SelAction> codeFontBox;
+	
+	public SettingsWindow() {
+		setType(Type.UTILITY);
+		setResizable(false);
+		setBounds(300,300,560,337);
+		setTitle("Preferences");
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0};
+		gridBagLayout.rowHeights = new int[]{42, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		getContentPane().setLayout(gridBagLayout);
+		getContentPane().setBackground(ClaireSDK.settings.bkgc1);
+		
+		JLabel lblNewLabel = new JLabel("Preferences");
+		
+		lblNewLabel.setForeground(ClaireSDK.settings.plainText);
+		lblNewLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNewLabel.gridx = 0;
+		gbc_lblNewLabel.gridy = 0;
+		getContentPane().add(lblNewLabel, gbc_lblNewLabel);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
+		gbc_tabbedPane.insets = new Insets(0, 0, 5, 0);
+		gbc_tabbedPane.fill = GridBagConstraints.BOTH;
+		gbc_tabbedPane.gridx = 0;
+		gbc_tabbedPane.gridy = 1;
+		getContentPane().add(tabbedPane, gbc_tabbedPane);
+		
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Look and feel", null, panel, null);
+		panel.setBackground(ClaireSDK.settings.bkgc1);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{118, 205, 46, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Theme");
+		lblNewLabel_1.setForeground(ClaireSDK.settings.plainText);
+		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+		gbc_lblNewLabel_1.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_1.gridx = 0;
+		gbc_lblNewLabel_1.gridy = 0;
+		panel.add(lblNewLabel_1, gbc_lblNewLabel_1);
+		
+		comboBox = new JComboBox<SelAction>();
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SelAction action = (SelAction) comboBox.getSelectedItem();
+				action.performAction();
+			}
+		});
+		comboBox.setModel(new DefaultComboBoxModel<SelAction>(new SelAction[] {
+				new SelAction("Light") {
+					@Override
+					public void performAction() {
+						ClaireSDK.settings.setLightTheme();
+					}
+				},
+				new SelAction("Dark") {
+					@Override
+					public void performAction() {
+						ClaireSDK.settings.setDarkTheme();
+					}
+				},
+				new SelAction("Blue") {
+					@Override
+					public void performAction() {
+						ClaireSDK.settings.setBlueTheme();
+					}
+				},
+				new SelAction("Graphite") {
+					@Override
+					public void performAction() {
+						ClaireSDK.settings.setGraphiteTheme();
+					}
+				}}));
+		comboBox.setSelectedIndex(1);
+		
+		GridBagConstraints gbc_comboBox = new GridBagConstraints();
+		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
+		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox.gridx = 1;
+		gbc_comboBox.gridy = 0;
+		panel.add(comboBox, gbc_comboBox);
+		
+		JLabel lblNewLabel_3 = new JLabel("Code font");
+		GridBagConstraints gbc_lblNewLabel_3 = new GridBagConstraints();
+		gbc_lblNewLabel_3.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel_3.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_3.gridx = 0;
+		gbc_lblNewLabel_3.gridy = 1;
+		panel.add(lblNewLabel_3, gbc_lblNewLabel_3);
+		
+		codeFontBox = new JComboBox<SelAction>();
+		codeFontBox.setModel(new DefaultComboBoxModel<SelAction>(new SelAction[] {
+				new SelAction("Lucida Console") {
+					@Override
+					public void performAction() {
+						ClaireSDK.settings.setGraphiteTheme();
+					}
+				}
+		}));
+		GridBagConstraints gbc_codeFontBox = new GridBagConstraints();
+		gbc_codeFontBox.insets = new Insets(0, 0, 5, 5);
+		gbc_codeFontBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_codeFontBox.gridx = 1;
+		gbc_codeFontBox.gridy = 1;
+		panel.add(codeFontBox, gbc_codeFontBox);
+		
+		JLabel lblNewLabel_2 = new JLabel("Color scheme");
+		GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
+		gbc_lblNewLabel_2.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_2.gridx = 0;
+		gbc_lblNewLabel_2.gridy = 2;
+		panel.add(lblNewLabel_2, gbc_lblNewLabel_2);
+		
+		colorSchemeBox = new JComboBox<>();
+		colorSchemeBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SelAction action = (SelAction) comboBox.getSelectedItem();
+				action.performAction();
+			}
+		});
+		colorSchemeBox.setModel(new DefaultComboBoxModel<SelAction>(new SelAction[] { 
+				new SelAction("Plain Text") {
+					@Override
+					public void performAction() {
+						colorLabel.setBackground(ClaireSDK.settings.plainTextCode);
+					}
+				},
+				new SelAction("Boolean values") {
+					@Override
+					public void performAction() {
+						colorLabel.setBackground(ClaireSDK.settings.c1);
+					}
+				},
+				new SelAction("Numeric values") {
+					@Override
+					public void performAction() {
+						colorLabel.setBackground(ClaireSDK.settings.c2);
+					}
+				},
+				new SelAction("Strings") {
+					@Override
+					public void performAction() {
+						colorLabel.setBackground(ClaireSDK.settings.c3);
+					}
+				},
+				new SelAction("Device's IDs") {
+					@Override
+					public void performAction() {
+						colorLabel.setBackground(ClaireSDK.settings.c4);
+					}
+				},new SelAction("Keywords 1") {
+					@Override
+					public void performAction() {
+						colorLabel.setBackground(ClaireSDK.settings.c5);
+					}
+				},new SelAction("Keywords 2") {
+					@Override
+					public void performAction() {
+						colorLabel.setBackground(ClaireSDK.settings.c6);
+					}
+				}}));
+		GridBagConstraints gbc_colorSchemeBox = new GridBagConstraints();
+		gbc_colorSchemeBox.insets = new Insets(0, 0, 5, 5);
+		gbc_colorSchemeBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_colorSchemeBox.gridx = 1;
+		gbc_colorSchemeBox.gridy = 2;
+		panel.add(colorSchemeBox, gbc_colorSchemeBox);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(ClaireSDK.settings.bkgc1);
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.anchor = GridBagConstraints.WEST;
+		gbc_panel_2.insets = new Insets(0, 0, 0, 5);
+		gbc_panel_2.fill = GridBagConstraints.VERTICAL;
+		gbc_panel_2.gridx = 1;
+		gbc_panel_2.gridy = 3;
+		panel.add(panel_2, gbc_panel_2);
+		
+		JButton changeColorBtn = new JButton("Choose Color");
+		changeColorBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				newColor = JColorChooser.showDialog(SettingsWindow.this,"Choose Color", Color.WHITE);
+				colorLabel.setBackground(newColor);
+				switch(colorSchemeBox.getSelectedIndex()) {
+				case 0: ClaireSDK.settings.plainTextCode = newColor; break;
+				case 1: ClaireSDK.settings.c1 = newColor; break;
+				case 2: ClaireSDK.settings.c2 = newColor; break;
+				case 3: ClaireSDK.settings.c3 = newColor; break;
+				case 4: ClaireSDK.settings.c4 = newColor; break;
+				case 5: ClaireSDK.settings.c5 = newColor; break;
+				case 6: ClaireSDK.settings.c6 = newColor; break;
+				}
+			}
+		});
+		panel_2.add(changeColorBtn);
+		
+		colorLabel = new JLabel("");
+		colorLabel.setMinimumSize(new Dimension(20,20));
+		colorLabel.setPreferredSize(new Dimension(20,20));
+		colorLabel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.DARK_GRAY));
+		colorLabel.setOpaque(true);
+		panel_2.add(colorLabel);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(ClaireSDK.settings.bkgc2);
+		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+		gbc_panel_1.fill = GridBagConstraints.BOTH;
+		gbc_panel_1.gridx = 0;
+		gbc_panel_1.gridy = 3;
+		getContentPane().add(panel_1, gbc_panel_1);
+		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JButton btnNewButton_1 = new JButton("Clear sensor directory");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clearSensorDirectory();
+			}
+		});
+		panel_1.add(btnNewButton_1);
+		
+		JButton btnNewButton = new JButton("Apply");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				applyAndClose();
+			}
+		});
+		panel_1.add(btnNewButton);
+		
+		if(ClaireSDK.settings.themeSelected.contentEquals("light")) {
+			comboBox.setSelectedIndex(0);
+		} else if(ClaireSDK.settings.themeSelected.contentEquals("dark")) {
+			comboBox.setSelectedIndex(1);
+		} else if(ClaireSDK.settings.themeSelected.contentEquals("blue")) {
+			comboBox.setSelectedIndex(2);
+		} else if(ClaireSDK.settings.themeSelected.contentEquals("graphite")) {
+			comboBox.setSelectedIndex(3);
+		}
+	}
+	
+	private void applyAndClose() {
+		ClaireSDK.settings.save();
+		dispose();
+		ClaireSDK.app.getFrame().dispose();
+		ClaireSDK.app = new Application();
+		ClaireSDK.app.getFrame().setVisible(true);
+	}
+
+	private int countSensors() {
+		File dir = new File("sensor");
+		return dir.listFiles().length;
+	}
+
+	private void clearSensorDirectory() {
+		if(ClaireSDK.app.getSimulation().getSensorList().isEmpty()) {
+			int count = countSensors();
+			File dir = new File("sensor");
+			for(File file: dir.listFiles()) 
+			    if (!file.isDirectory()) 
+			        file.delete();
+			ClaireSDK.app.alert("Deleted " + count + " sensor information");
+		} else {
+			ClaireSDK.app.alert("Your sensor list must be empty before you can delete all files");
+		}
+		
+	}
+
+}
