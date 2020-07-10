@@ -54,6 +54,8 @@ public abstract class Sensor extends JPanel {
 	private JTextField inputField;
 	private JButton sendBtn;
 	private String sensorFile;
+	private JPanel panel_2;
+	private JButton btnNewButton;
 
 	public Sensor(String id, String sensorName, String inputType, String name) throws IOException {
 
@@ -167,17 +169,19 @@ public abstract class Sensor extends JPanel {
 		add(panel, gbc_panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[] { 0, 0 };
-		gbl_panel.rowHeights = new int[] { 35, 0, 0, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 35, 0, 30, 0, 0 };
 		gbl_panel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
 		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
-		JLabel nameLabel = new JLabel(name + ": " + sensorName);
+		JLabel nameLabel = new JLabel(name + ": " + sensorName, JLabel.CENTER);
+		nameLabel.setOpaque(true);
+		nameLabel.setBackground(ClaireSDK.settings.bkgc2);
 		nameLabel.setForeground(ClaireSDK.settings.plainText);
 		nameLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
 		GridBagConstraints gbc_NameLabel = new GridBagConstraints();
+		gbc_NameLabel.fill = GridBagConstraints.BOTH;
 		gbc_NameLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_NameLabel.anchor = GridBagConstraints.WEST;
 		gbc_NameLabel.gridx = 0;
 		gbc_NameLabel.gridy = 0;
 		panel.add(nameLabel, gbc_NameLabel);
@@ -187,32 +191,52 @@ public abstract class Sensor extends JPanel {
 		idLabel.setFont(new Font("Helvetica Neue", Font.PLAIN, 13));
 		GridBagConstraints gbc_IdLabel = new GridBagConstraints();
 		gbc_IdLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_IdLabel.anchor = GridBagConstraints.WEST;
 		gbc_IdLabel.gridx = 0;
 		gbc_IdLabel.gridy = 1;
 		panel.add(idLabel, gbc_IdLabel);
+		
+		panel_2 = new JPanel();
+		panel_2.setBackground(ClaireSDK.settings.bkgc2);
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.insets = new Insets(0, 0, 0, 0);
+		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.gridx = 0;
+		gbc_panel_2.gridy = 2;
+		panel.add(panel_2, gbc_panel_2);
+		
+				switchButton = new JButton("OFF");
+				panel_2.add(switchButton);
+				switchButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (isTurnedOn()) {
+							turnOff();
+						} else {
+							turnOn();
+						}
+					}
+				});
+				switchButton.setForeground(new Color(178, 34, 34));
+				
+				btnNewButton = new JButton("Connect");
+				btnNewButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						connect();
+					}
+				});
+				panel_2.add(btnNewButton);
+				switchButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+					}
+				});
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(ClaireSDK.settings.bkgc1);
 		panel_1.setOpaque(false);
 		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		gbc_panel_1.anchor = GridBagConstraints.WEST;
+		gbc_panel_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_panel_1.gridx = 0;
 		gbc_panel_1.gridy = 3;
 		panel.add(panel_1, gbc_panel_1);
-
-		switchButton = new JButton("OFF");
-		switchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (isTurnedOn()) {
-					turnOff();
-				} else {
-					turnOn();
-				}
-			}
-		});
-		panel_1.add(switchButton);
-		switchButton.setForeground(new Color(178, 34, 34));
 
 		inputField = new JTextField();
 		inputField.setToolTipText("input");
@@ -234,10 +258,6 @@ public abstract class Sensor extends JPanel {
 		selected.setFont(new Font("Helvetica Neue", Font.PLAIN, 13));
 		selected.setForeground(ClaireSDK.settings.plainText);
 		panel_1.add(selected);
-		switchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
 	}
 
 	private void send() {
@@ -379,8 +399,11 @@ public abstract class Sensor extends JPanel {
 		this.name = name;
 	}
 	
+	public static int sensorCount = 1;
+	
 	public void connect() {
-		
+		ClaireSDK.app.getCurrentCodeTab().getTp().setText(ClaireSDK.app.getCurrentCodeTab().getTp().getText() + "connect device" + sensorCount + " #" + id + ";\n");
+		sensorCount++;
 	}
 
 }

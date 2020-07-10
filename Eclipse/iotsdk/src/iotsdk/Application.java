@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 
 public class Application {
 
@@ -207,7 +208,7 @@ public class Application {
 
 
 		terminalSidePanel = new JPanel();
-		tabbedPane_1.addTab("Terminal", null, terminalSidePanel, null);
+		tabbedPane_1.addTab("Terminal", new ImageIcon(Application.class.getResource("/resources/Terminalicon2.png")), terminalSidePanel, null);
 		terminalSidePanel.setBackground(ClaireSDK.settings.bkgc3);
 		GridBagLayout gbl_terminalSidePanel = new GridBagLayout();
 		gbl_terminalSidePanel.columnWidths = new int[]{0, 0};
@@ -228,7 +229,7 @@ public class Application {
 		scrollPane_terminal.setViewportView(terminal);
 
 		consoleSidePanel = new JPanel();
-		tabbedPane_1.addTab("Console", null, consoleSidePanel, null);
+		tabbedPane_1.addTab("Console", new ImageIcon(Application.class.getResource("/resources/Consoleicon2.png")), consoleSidePanel, null);
 		consoleSidePanel.setBackground(ClaireSDK.settings.bkgc3);
 		GridBagLayout gbl_consoleSidePanel = new GridBagLayout();
 		gbl_consoleSidePanel.columnWidths = new int[]{0, 0};
@@ -286,7 +287,7 @@ public class Application {
 					getMenuBar().getRunSimMenuBtn().setEnabled(true);
 					getTerminal().append("Running ended");
 				} catch (IOException | NullPointerException e1) {
-					alert("Workspace error: Cannot run /build/claire. Be sure the compiler is inside your workspace folder");
+					alert("Workspace error: Cannot run "+ClaireSDK.settings.getSrcPath()+"build/claire. Be sure the compiler is inside your workspace folder");
 				}
 			}
 		};
@@ -303,11 +304,9 @@ public class Application {
 					File tmpscr = new File(currentRunningScript);
 					tmpscr.delete();
 					reader.close();
-
 					if(!process.isAlive()) {
 						throw new NullPointerException();
 					}
-
 				} catch (IOException | NullPointerException e) {
 					getTerminal().appendError("No process to stop");
 				} catch (IllegalMonitorStateException e1) {

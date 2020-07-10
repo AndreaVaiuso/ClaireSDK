@@ -12,7 +12,7 @@ public class ButtonSensor extends Sensor {
 
 	private static final long serialVersionUID = -825086977351250185L;
 	private JLabel button;
-	public static String desc = "The output of this device is 1 if the button is clicked, else is 0. Input is always 0 and is not editable";
+	public static String desc = "The output of the button is 1 when it's pressed, else is 0. Input is always 0";
 
 	public ButtonSensor(String id,String name) throws IOException {
 		super(id,"Button","0",name);

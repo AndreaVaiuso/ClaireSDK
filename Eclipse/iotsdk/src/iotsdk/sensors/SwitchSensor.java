@@ -13,7 +13,7 @@ public class SwitchSensor extends Sensor {
 	private static final long serialVersionUID = -825086977351250185L;
 	private JLabel button;
 	private boolean isClicked = false;
-	public static String desc = "The output of this device is 1 if the switch is on, else is 0. Input is always 0.";
+	public static String desc = "The output of this device is 1 if the switch is on, else is 0. Input is always 0. You can switch it by changing output value";
 
 	public SwitchSensor(String id, String name) throws IOException {
 		super(id,"Switch","0", name);

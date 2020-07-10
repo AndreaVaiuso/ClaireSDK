@@ -12,7 +12,7 @@ import iotsdk.Sensor;
 
 public class RGBLight extends Sensor {
 	private static final long serialVersionUID = -2693959476765346634L;
-	public static String desc = "This device will show the rgb int value in input. The output is 1 if the color is not 0, else is 0.";
+	public static String desc = "This device reads as input the integer RGB value and lights up that color. The device's output is 1 if the color is not black, else is 0";
 	
 	private JLabel light = new JLabel("");
 

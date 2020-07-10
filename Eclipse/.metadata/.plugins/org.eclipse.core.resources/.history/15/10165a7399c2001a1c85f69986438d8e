@@ -1,0 +1,49 @@
+package iotsdk.sensors;
+
+import java.awt.Color;
+import java.io.IOException;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
+
+import iotsdk.Sensor;
+
+public class RGBLight extends Sensor {
+	private static final long serialVersionUID = -2693959476765346634L;
+	public static String desc = "This device will show the rgb int value in input. The output is 1 if the color is not 0, else is 0.";
+	
+	private JLabel light = new JLabel("");
+
+	public RGBLight(String id,String name) throws IOException {
+		super(id, "RGB Light","0",name);
+		light.setOpaque(true);
+		getGuiPanel().add(light);
+		light.setBounds(32, 20, 60, 60);
+		light.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		updateGui();
+	}
+
+	@Override
+	public void updateGui() {
+		if(isTurnedOn()) {
+			try {
+				String input = super.getInput();
+				int num = (int) Math.round(Double.valueOf(input));
+				if(num==0) {
+					writeOutput("0");
+				} else {
+					writeOutput("1");
+				}
+				Color c = new Color(num);
+				light.setBackground(c);
+			} catch(Exception e) {
+				light.setBackground(Color.LIGHT_GRAY);
+			}
+		} else {
+			light.setBackground(Color.LIGHT_GRAY);
+		}
+	}
+
+}

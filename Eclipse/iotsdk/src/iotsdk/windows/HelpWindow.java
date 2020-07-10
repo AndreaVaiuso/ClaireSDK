@@ -49,7 +49,7 @@ public class HelpWindow extends JFrame {
 		gbc_lblNewLabel.gridy = 0;
 		getContentPane().add(lblNewLabel, gbc_lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("Claire Software Developement Kit");
+		JLabel lblNewLabel_1 = new JLabel("Claire Software Development Kit");
 		lblNewLabel_1.setForeground(ClaireSDK.settings.plainText);
 		lblNewLabel_1.setFont(new Font("Helvetica Neue", Font.BOLD, 20));
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
@@ -73,7 +73,7 @@ public class HelpWindow extends JFrame {
 					File htmlFile = new File(ClaireSDK.settings.getSrcPath()+"doc/index.html");
 					Desktop.getDesktop().browse(htmlFile.toURI());
 				} catch (Exception e1) {
-					ClaireSDK.app.alert("No documentation available. Please be sure /doc/index.html is present in your workspace directory");
+					ClaireSDK.app.alert("No documentation available. Please be sure "+ClaireSDK.settings.getSrcPath()+"doc/index.html is present in your workspace directory");
 				}
 			}
 		});
@@ -88,7 +88,7 @@ public class HelpWindow extends JFrame {
 		gbc_lblNewLabel_4.gridy = 3;
 		getContentPane().add(lblNewLabel_4, gbc_lblNewLabel_4);
 		
-		JLabel lblNewLabel_5 = new JLabel("Project Developing: Andrea Vaiuso, Edgar Polizzi, Cedric Ferdico");
+		JLabel lblNewLabel_5 = new JLabel("Developers: Andrea Vaiuso, Edgar Polizzi, Cedric Ferdico");
 		lblNewLabel_5.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		lblNewLabel_5.setForeground(ClaireSDK.settings.plainText2);
 		GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
@@ -97,7 +97,7 @@ public class HelpWindow extends JFrame {
 		gbc_lblNewLabel_5.gridy = 4;
 		getContentPane().add(lblNewLabel_5, gbc_lblNewLabel_5);
 		
-		JLabel lblNewLabel_6 = new JLabel("Developing frameworks: Flex, Bison");
+		JLabel lblNewLabel_6 = new JLabel("Frameworks: Flex, Bison");
 		lblNewLabel_6.setForeground(ClaireSDK.settings.plainText);
 		GridBagConstraints gbc_lblNewLabel_6 = new GridBagConstraints();
 		gbc_lblNewLabel_6.insets = new Insets(0, 0, 5, 0);

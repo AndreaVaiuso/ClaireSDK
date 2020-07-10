@@ -20,7 +20,7 @@ public class ClaireSDK {
 	
 	public static Application app;
 	public static Settings settings = Settings.getSettings();
-	public static String version = "0.9.2";
+	public static String version = "0.9.3";
 	
 	
 	public static void main(String[] args) {

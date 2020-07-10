@@ -12,7 +12,7 @@ import iotsdk.Sensor;
 
 public class SimpleLight extends Sensor {
 	private static final long serialVersionUID = -2693959476765346634L;
-	public static String desc = "The light is off when input is 0, else is on. The output is 0 if the light is off, else is 1";
+	public static String desc = "The light brights if input value is not 0. The output is 0 if the lights is off, else is 1.";
 	
 	private JLabel light = new JLabel("");
 
