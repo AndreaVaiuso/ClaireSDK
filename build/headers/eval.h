@@ -25,6 +25,7 @@ AST* eval(AST* in){
         //Questa rappresenta la gestione degli identificatori
         case IDENTIFIER: {
             SYMREF* ptr = (SYMREF*) in;
+            updatedevice(ptr);
             //Is not an array
             if(ptr->index==NULL){
                 //We want input or output
@@ -33,7 +34,6 @@ AST* eval(AST* in){
                         yyerror("This is not a device");
                         exit(1);
                     }
-                    updatedevice(ptr);
                     LDEVICE* dev = (LDEVICE*) ptr->symbol->value;
                     if(ptr->readingtype == 1) {
                         retrvalue = dev->output;
@@ -47,6 +47,7 @@ AST* eval(AST* in){
                 }
                 //Is a vector
             } else {
+                
                 if(ptr->symbol->value->nodetype != COLLECTION){
                     yyerror("The element is not a collection");
                     exit(1);
@@ -65,6 +66,13 @@ AST* eval(AST* in){
                     }
                     valptr = valptr->next;
                 }
+                
+                if(valptr->value->nodetype == IDENTIFIER){
+                    SYMREF* symref = (SYMREF*) valptr->value;
+                    symref->readingtype = ptr->readingtype;
+                    return (AST*) symref;
+                }
+                
                 return valptr->value;
             }
             break;
@@ -74,6 +82,9 @@ AST* eval(AST* in){
         case ASSIGN: {
             SYMASGN* ptr = (SYMASGN*) in;
             AST* assign = eval(ptr->assignment);
+            if(assign->nodetype == IDENTIFIER){
+                assign = eval(assign);
+            }
             SYMBOL* symbol = (SYMBOL*) ptr->ref->symbol;
             AST* val = symbol->value;
             int rightType = assign->nodetype;
@@ -125,11 +136,12 @@ AST* eval(AST* in){
                 }
                 //Is inside a vector
             } else {
-
                 if(val->nodetype != COLLECTION){
                     yyerror("The element is not a collection");
                     exit(1);
                 }
+                
+                
                 LCOLLECTION* coll = (LCOLLECTION*) val;
                 
                 LNUM* ind = (LNUM*) eval(ptr->ref->index);
@@ -143,14 +155,71 @@ AST* eval(AST* in){
                     }
                     valptr = valptr->next;
                 }
-                if(valptr->value->nodetype == assign->nodetype){
-                    valptr->value = assign;
-                    return valptr->value;
+                
+                if(valptr->value->nodetype != IDENTIFIER){
+                    if(valptr->value->nodetype == assign->nodetype){
+                        valptr->value = assign;
+                        return valptr->value;
+                    }
                 } else {
-                    yyerror("Conflicting types for collection");
-                    exit(1);
+                    SYMREF* symref = (SYMREF*) valptr->value;
+                    
+                    if(ptr->ref->readingtype != 0){
+                        if(symref->symbol->value->nodetype != DEVICEID){
+                            yyerror("This is not a device");
+                            exit(1);
+                        }
+                        LDEVICE* dev = (LDEVICE*) symref->symbol->value;
+                        //CHECK TYPE COMPATIBILITY (Conflicting types)
+                        if(dev->inputType==1 || dev->inputType==0){
+                            if(assign->nodetype == NUMBER){
+                                LNUM* num = (LNUM*) assign;
+                                //Output case
+                                if(ptr->ref->readingtype == 1){
+                                    dev->output = assign;
+                                    retrvalue = (AST*) dev->output;
+                                    //Input case
+                                } else {
+                                    dev->input = assign;
+                                    retrvalue = (AST*) dev->input;
+                                }
+                                writedev(dev);
+                                return retrvalue;
+                            } else {
+                                yyerror("You can use only number as input/output for this device");
+                                exit(1);
+                            }
+                        } else {  //STRING DEVICE CASE
+                            if(assign->nodetype == STRING){
+                                //Output case
+                                if(ptr->ref->readingtype == 1){
+                                    dev->output = assign;
+                                    retrvalue =  (AST*) dev->output;
+                                    //Input case
+                                } else {
+                                    dev->input = assign;
+                                    retrvalue = (AST*) dev->input;
+                                }
+                                writedev(dev);
+                                return retrvalue;
+                            } else {
+                                yyerror("You can use only strings as input/output for this device");
+                                exit(1);
+                            }
+                        }
+                    } else {
+                        if(symref->symbol->value->nodetype != assign->nodetype){
+                            yyerror("Conflicting types for collection");
+                            exit(1);
+                        }
+                        symref->symbol->value = assign;
+                        return symref->symbol->value;
+                    }
                 }
             }
+            
+                
+            
             if(assign->nodetype == LIST){
                 AST* coll = newcollection((VARLIST*)assign);
                 (findsymbol(symbol->name))->value = coll;
@@ -160,6 +229,7 @@ AST* eval(AST* in){
                 retrvalue = assign;
             }
             break;
+
         }
             
             /*/////////////////////////OPERATIONS/////////////////////////////*/
@@ -458,8 +528,21 @@ AST* eval(AST* in){
                     }
                     break;
                 }
+                case IDENTIFIER: {
+                    if(b->fname == 0){
+                        SYMREF* symref = (SYMREF*)v;
+                        if(symref->readingtype != 0){
+                            LDEVICE* dev = (LDEVICE*) symref->symbol->value;
+                            if(symref->readingtype==-1){
+                                eval(newbinfunc(eval(dev->input),0));
+                            } else eval(newbinfunc(eval(dev->output),0));
+                        } else eval(newbinfunc(eval(symref->symbol->value),0));
+                    }
+                    break;
+                }
                 default: {
                     if(b->fname == 0){
+                        printf("Wrong type: %d\n",v->nodetype);
                         yyerror("Printing wrong type");
                     } if(b->fname == 1){
                         return newfloat(0.0);

@@ -114,7 +114,6 @@ AST* newdevice(char* deviceid){
     newl->nodetype = DEVICEID;
     if(newl != NULL){
         char* filename;
-        //
         asprintf(&filename,"%ssensor/%s.sensor",PATH,deviceid);
         FILE* ptr = fopen(filename,"r");
         if(ptr){
@@ -135,12 +134,22 @@ AST* newdevice(char* deviceid){
 AST* newcollection(VARLIST* list){
     LCOLLECTION* newl = (LCOLLECTION *) malloc(sizeof(LCOLLECTION));
     if(newl != NULL){
-        newl->nodetype = COLLECTION;
-        newl->collectiontype = list->value->nodetype;
         VARLIST* p = list;
+        newl->nodetype = COLLECTION;
+        int type;
+        if(p->value->nodetype == IDENTIFIER){
+            SYMREF* ref = (SYMREF*) p->value;
+            type = ref->symbol->value->nodetype;
+        } else type = p->value->nodetype;
+        newl->collectiontype = type;
         int k = 0;
+        // PARTE INCRIMINATA 2 (Controllo su valori degli identificatori!)
         while(p != NULL){
-            if(p->value->nodetype != newl->collectiontype){
+            if(p->value->nodetype == IDENTIFIER){
+                SYMREF* ref = (SYMREF*) p->value;
+                type = ref->symbol->value->nodetype;
+            } else type = p->value->nodetype;
+            if(type != newl->collectiontype){
                 yyerror("Types on a collection cannot be different");
                 exit(1);
             }

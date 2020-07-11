@@ -1,27 +1,24 @@
-connect display #FDX2PD;
-connect temp #4ZGIXC;
-connect condizionatore #ZLWB86;
-connect termosifone #OFYDMW;
+connect light1 #NHW18U;
+connect light2 #02BTI8;
+connect light3 #GYBPZC;
+connect tv #U2WZMG;
+connect prox #96I2GC;
 
-function gestisciClima(ctr) is
-       ctr?
-              if 3, condizionatore.output is 1; termosifone.output is 0; 
-              endif;
-              if 2, condizionatore.output is 0; termosifone.output is 0; 
-              endif;
-               if 1, condizionatore.output is 0;  termosifone.output is 1; 
-              endif;
-       end;
+collection salotto is {tv,light2};
+collection luci is {light1,light2,light3};
+
+function turnoffall(lights) is
+	i is 0;
+	while i < size(lights) do
+		lights[i].input is 0;
+		increase i by 1;
+	repeat;
 end;
 
 update is
-       t is temp.output;
-       ctr;
-       if t <=17, display.input is "Freddo_temp:" + t + "C"; ctr is 1;
-       end;
-       if t >17 and t < 27, display.input is "Mite_temp:" + t + "C"; ctr is 2;
-       end;
-       if t >= 27, display.input is "Caldo_temp:" + t + "C"; ctr is 3;
-       end;
-       gestisciClima(ctr);
-repeat 2;
+	if prox.output = 1, 
+		tv.output is 1;
+		light2.input is 1;
+	else turnoffall(luci); tv.output is 0;
+	end;
+repeat;

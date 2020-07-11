@@ -1,8 +1,12 @@
+connect l #RNPLCJ;
+connect x #8SGM8R;
+collection c is {l,x};
+v is 1;
+collection c1 is {v,2,3};
+
 update is
-    i;
-    while i < 100000000 do
-        increase i by 1;
-    repeat;
+    c[0].input is 123;
+    print(c[0].input);
 end;
 
 
