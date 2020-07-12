@@ -55,7 +55,6 @@ typedef struct varlist {
 typedef struct collection {
     int nodetype; //COLLECTION
     int size;
-    int collectiontype;
     VARLIST* collection;
 } LCOLLECTION;
 
@@ -150,6 +149,6 @@ void printcurrentsymhash();
 
 
 extern int yylineno; /* from lexer */
-void yyerror(char *s);
+void yyerror(char *s,...);
 
 void setInput(FILE* input);

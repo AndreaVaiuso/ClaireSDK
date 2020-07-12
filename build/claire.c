@@ -136,23 +136,8 @@ AST* newcollection(VARLIST* list){
     if(newl != NULL){
         VARLIST* p = list;
         newl->nodetype = COLLECTION;
-        int type;
-        if(p->value->nodetype == IDENTIFIER){
-            SYMREF* ref = (SYMREF*) p->value;
-            type = ref->symbol->value->nodetype;
-        } else type = p->value->nodetype;
-        newl->collectiontype = type;
         int k = 0;
-        // PARTE INCRIMINATA 2 (Controllo su valori degli identificatori!)
         while(p != NULL){
-            if(p->value->nodetype == IDENTIFIER){
-                SYMREF* ref = (SYMREF*) p->value;
-                type = ref->symbol->value->nodetype;
-            } else type = p->value->nodetype;
-            if(type != newl->collectiontype){
-                yyerror("Types on a collection cannot be different");
-                exit(1);
-            }
             p = p->next;
             k++;
         }
@@ -250,6 +235,12 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
-void yyerror(char *s){
-    fprintf(stderr, "error: %s\n", s);
+void yyerror(char *s, ...)
+{
+  va_list ap;
+  va_start(ap, s);
+
+  fprintf(stderr, "%d: error: ", (yylineno-1));
+  vfprintf(stderr, s, ap);
+  fprintf(stderr, "\n");
 }

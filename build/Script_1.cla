@@ -1,12 +1,8 @@
-connect l #RNPLCJ;
-connect x #8SGM8R;
-collection c is {l,x};
-v is 1;
-collection c1 is {v,2,3};
+connect d1 #02BTI8;
+connect d2 #5K7MMK;
+collection c is {d1,d2};
 
 update is
-    c[0].input is 123;
-    print(c[0].input);
+    x[11] is 9;
 end;
-
 

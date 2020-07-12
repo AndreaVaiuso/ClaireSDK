@@ -31,7 +31,12 @@ AST* eval(AST* in){
                 //We want input or output
                 if(ptr->readingtype != 0){
                     if(ptr->symbol->value->nodetype != DEVICEID){
-                        yyerror("This is not a device");
+                        if(ptr->readingtype == 1){
+                            yyerror("You are trying to access output of a variable that is not a device: ", ptr->symbol->name);
+                        } else {
+                            yyerror("You are trying to access input of a variable that is not a device: ", ptr->symbol->name);
+                        }
+                        
                         exit(1);
                     }
                     LDEVICE* dev = (LDEVICE*) ptr->symbol->value;
@@ -48,20 +53,26 @@ AST* eval(AST* in){
                 //Is a vector
             } else {
                 
+                LNUM* ind = (LNUM*) eval(ptr->index);
+                int i = ((int) ind->value);
+                
                 if(ptr->symbol->value->nodetype != COLLECTION){
-                    yyerror("The element is not a collection");
+                    char indvalue[10];
+                    sprintf(indvalue, "%d", i);
+                    yyerror("You are pointing the position ",indvalue," of variable ",ptr->symbol->name," that is not a collection");
                     exit(1);
                 }
                 
                 LCOLLECTION* coll = (LCOLLECTION*) ptr->symbol->value;
                 
-                LNUM* ind = (LNUM*) eval(ptr->index);
-                int i = ((int) ind->value);
+                
                 VARLIST* valptr = coll->collection;
                 
                 for(int j=0;j<i;j++){
                     if(valptr == NULL){
-                        yyerror("Collection index out of bounds");
+                        char siz[10];
+                        sprintf(siz, "%d", coll->size);
+                        yyerror("Collection index out of bounds for variable: ",ptr->symbol->name," of size: ",siz);
                         exit(1);
                     }
                     valptr = valptr->next;
@@ -81,155 +92,107 @@ AST* eval(AST* in){
         //Questa rappresenta la gestione degli assegnamenti
         case ASSIGN: {
             SYMASGN* ptr = (SYMASGN*) in;
+            SYMBOL* symbol = findsymbol(ptr->ref->symbol->name);
+            SYMREF* symref;
+            AST* val = symbol->value;
             AST* assign = eval(ptr->assignment);
             if(assign->nodetype == IDENTIFIER){
                 assign = eval(assign);
             }
-            SYMBOL* symbol = (SYMBOL*) ptr->ref->symbol;
-            AST* val = symbol->value;
-            int rightType = assign->nodetype;
-            if(ptr->ref->index==NULL){
-                //We want input or output
-                if(ptr->ref->readingtype != 0){
-                    if(val->nodetype != DEVICEID){
-                        yyerror("This is not a device");
-                        exit(1);
-                    }
-                    LDEVICE* dev = (LDEVICE*) val;
-                    //CHECK TYPE COMPATIBILITY (Conflicting types)
-                    if(dev->inputType==1 || dev->inputType==0){
-                        if(assign->nodetype == NUMBER){
-                            LNUM* num = (LNUM*) assign;
-                            //Output case
-                            if(ptr->ref->readingtype == 1){
-                                dev->output = assign;
-                                retrvalue = (AST*) dev->output;
-                                //Input case
-                            } else {
-                                dev->input = assign;
-                                retrvalue = (AST*) dev->input;
-                            }
-                            writedev(dev);
-                            return retrvalue;
-                        } else {
-                            yyerror("You can use only number as input/output for this device");
-                            exit(1);
-                        }
-                    } else {  //STRING DEVICE CASE
-                        if(assign->nodetype == STRING){
-                            //Output case
-                            if(ptr->ref->readingtype == 1){
-                                dev->output = assign;
-                                retrvalue =  (AST*) dev->output;
-                                //Input case
-                            } else {
-                                dev->input = assign;
-                                retrvalue = (AST*) dev->input;
-                            }
-                            writedev(dev);
-                            return retrvalue;
-                        } else {
-                            yyerror("You can use only strings as input/output for this device");
-                            exit(1);
-                        }
-                    }
-                }
-                //Is inside a vector
-            } else {
+            if(assign->nodetype == LIST){
+                AST* coll = newcollection((VARLIST*)assign);
+                symbol->value = coll;
+                return coll;
+            }
+            //Se stiamo cercando di accedere ad un elemento di una collection troviamo il valore puntato dall'indice e lo mettiamo in VAL
+            if(ptr->ref->index != NULL){
+                LNUM* ind = (LNUM*) eval(ptr->ref->index);
+                int i = ((int) ind->value);
+                
                 if(val->nodetype != COLLECTION){
-                    yyerror("The element is not a collection");
+                    char indvalue[10];
+                    sprintf(indvalue, "%d", i);
+                    yyerror("You are pointing the position ",indvalue," of variable ",symbol->name," that is not a collection");
                     exit(1);
                 }
                 
-                
                 LCOLLECTION* coll = (LCOLLECTION*) val;
-                
-                LNUM* ind = (LNUM*) eval(ptr->ref->index);
-                int i = ((int) ind->value);
                 VARLIST* valptr = coll->collection;
                 
                 for(int j=0;j<i;j++){
                     if(valptr == NULL){
-                        yyerror("Collection index out of bounds");
+                        char siz[10];
+                        sprintf(&siz, "%d", coll->size);
+                        yyerror("Collection index out of bounds for variable: ",symbol->name," of size: ",siz);
                         exit(1);
                     }
                     valptr = valptr->next;
                 }
-                
-                if(valptr->value->nodetype != IDENTIFIER){
-                    if(valptr->value->nodetype == assign->nodetype){
+                val = valptr->value;
+                // Se il valore è vero e non è un identificatore:
+                if(val->nodetype != IDENTIFIER){
+                    if(val->nodetype == assign->nodetype){
                         valptr->value = assign;
                         return valptr->value;
                     }
                 } else {
-                    SYMREF* symref = (SYMREF*) valptr->value;
-                    
-                    if(ptr->ref->readingtype != 0){
-                        if(symref->symbol->value->nodetype != DEVICEID){
-                            yyerror("This is not a device");
-                            exit(1);
-                        }
-                        LDEVICE* dev = (LDEVICE*) symref->symbol->value;
-                        //CHECK TYPE COMPATIBILITY (Conflicting types)
-                        if(dev->inputType==1 || dev->inputType==0){
-                            if(assign->nodetype == NUMBER){
-                                LNUM* num = (LNUM*) assign;
-                                //Output case
-                                if(ptr->ref->readingtype == 1){
-                                    dev->output = assign;
-                                    retrvalue = (AST*) dev->output;
-                                    //Input case
-                                } else {
-                                    dev->input = assign;
-                                    retrvalue = (AST*) dev->input;
-                                }
-                                writedev(dev);
-                                return retrvalue;
-                            } else {
-                                yyerror("You can use only number as input/output for this device");
-                                exit(1);
-                            }
-                        } else {  //STRING DEVICE CASE
-                            if(assign->nodetype == STRING){
-                                //Output case
-                                if(ptr->ref->readingtype == 1){
-                                    dev->output = assign;
-                                    retrvalue =  (AST*) dev->output;
-                                    //Input case
-                                } else {
-                                    dev->input = assign;
-                                    retrvalue = (AST*) dev->input;
-                                }
-                                writedev(dev);
-                                return retrvalue;
-                            } else {
-                                yyerror("You can use only strings as input/output for this device");
-                                exit(1);
-                            }
-                        }
-                    } else {
-                        if(symref->symbol->value->nodetype != assign->nodetype){
-                            yyerror("Conflicting types for collection");
-                            exit(1);
-                        }
-                        symref->symbol->value = assign;
-                        return symref->symbol->value;
-                    }
+                    symbol = ((SYMREF*) valptr->value)->symbol;
+                    val = symbol->value;
                 }
             }
-            
-                
-            
-            if(assign->nodetype == LIST){
-                AST* coll = newcollection((VARLIST*)assign);
-                (findsymbol(symbol->name))->value = coll;
-                retrvalue = coll;
+            //Se stiamo cercando di accedere ad input/output di un dispositivo:
+            if(ptr->ref->readingtype != 0){
+                if(val->nodetype != DEVICEID){
+                    if(ptr->ref->readingtype == 1){
+                        yyerror("You are trying to access output of a variable that is not a device: ", symbol->name);
+                    } else {
+                        yyerror("You are trying to access input of a variable that is not a device: ", symbol->name);
+                    }
+                    exit(1);
+                }
+                LDEVICE* dev = (LDEVICE*) val;
+                //CHECK TYPE COMPATIBILITY (Conflicting types)
+                if(dev->inputType==1 || dev->inputType==0){
+                    if(assign->nodetype == NUMBER){
+                        LNUM* num = (LNUM*) assign;
+                        //Output case
+                        if(ptr->ref->readingtype == 1){
+                            dev->output = assign;
+                            retrvalue = (AST*) dev->output;
+                        //Input case
+                        } else {
+                            dev->input = assign;
+                            retrvalue = (AST*) dev->input;
+                        }
+                        writedev(dev);
+                        return retrvalue;
+                    } else {
+                        yyerror("You can use only number as input/output for this device: ", symbol->name);
+                        exit(1);
+                    }
+                } else {  //STRING DEVICE CASE
+                    if(assign->nodetype == STRING){
+                        //Output case
+                        if(ptr->ref->readingtype == 1){
+                            dev->output = assign;
+                            retrvalue =  (AST*) dev->output;
+                            //Input case
+                        } else {
+                            dev->input = assign;
+                            retrvalue = (AST*) dev->input;
+                        }
+                        writedev(dev);
+                        return retrvalue;
+                    } else {
+                        yyerror("You can use only strings as input/output for this device: ", symbol->name);
+                        exit(1);
+                    }
+                }
             } else {
-                (findsymbol(symbol->name))->value = assign;
-                retrvalue = assign;
+                symbol->value = assign;
+                return symbol->value;
             }
             break;
-
         }
             
             /*/////////////////////////OPERATIONS/////////////////////////////*/
@@ -467,7 +430,7 @@ AST* eval(AST* in){
             if(b->fname == 2){
                 AST* v = eval(b->input);
                 if(v->nodetype != NUMBER){
-                    yyerror("You must use numeric values");
+                    yyerror("You must use numeric values in function sleep()");
                 }
                 int sl = (int) (((LNUM*) v)->value*1000000);
                 usleep(sl);
@@ -542,8 +505,7 @@ AST* eval(AST* in){
                 }
                 default: {
                     if(b->fname == 0){
-                        printf("Wrong type: %d\n",v->nodetype);
-                        yyerror("Printing wrong type");
+                        yyerror("Trying to print incompatible type");
                     } if(b->fname == 1){
                         return newfloat(0.0);
                     }
@@ -565,7 +527,7 @@ AST* eval(AST* in){
             if(ptrsymlist!=NULL){
                 do {
                     if(ptrdummy == NULL){
-                        yyerror("Too few arguments");
+                        yyerror("Too few arguments for function: ", fname);
                         exit(1);
                     }
                     ptrsymlist->value->value = eval(ptrdummy->value);
@@ -575,7 +537,7 @@ AST* eval(AST* in){
             }
             
              if(ptrdummy != NULL){
-                yyerror("Too many arguments");
+                yyerror("Too many arguments for function: ", fname);
                 exit(1);
             }
             if((retrvalue = eval(f->instructions))->nodetype == RETURN){
