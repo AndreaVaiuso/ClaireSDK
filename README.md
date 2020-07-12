@@ -5,14 +5,15 @@ Per inizializzare Claire è sufficiente:
     [Scarica compilatore](https://github.com/AndreaVaiuso/ClaireSDK.git)
 2. Scaricare ed eseguire l'ambiente di sviluppo:
     [Download SDK](https://github.com/AndreaVaiuso/ClaireSDK/tree/master/Executable)
-
-Per compilare il codice sorgente basterà portarsi nella directory /build ed avviare
-
-`./compile`
-
-in alternativa digitare
-
-`gcc -o claire "claire.c" "lex.yy.c" parser.tab.c`
+3. Copiare l'intero contenuto della cartella /build all'interno della directory /User/NOMEUTENTE/ClaireSDK/build
+4. Copiare la cartella /doc all'interno della directory /User/NOMEUTENTE/ClaireSDK/
+5. Per compilare il codice sorgente basterà portarsi nella directory /build ed avviare `./compile`, oppure `gcc -o claire "claire.c" "lex.yy.c" parser.tab.c`, oppure ancora dall'IDE dal menu in corrispondenza della voce File > Developer Tools > Recompile source
+    
+    Attenzione: Per avviare l'applicazione ClaireSDK.app su macOs è necessario abilitare l'esecuzione di applicazioni di sviluppatori non identificati. Per fare ciò, dal terminale digitare ed eseguire il seguente comando:
+    
+    La compilazione del file sorgente è al momento funzionante solo su macOs.
+    
+`sudo spctl --master-disable`
 
 Per la documentazione completa:
 https://github.com/AndreaVaiuso/ClaireSDK/blob/master/doc/index.html
