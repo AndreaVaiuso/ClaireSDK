@@ -1,0 +1,410 @@
+package iotsdk;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.JPanel;
+import java.awt.GridBagLayout;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.UIManager;
+import java.awt.Color;
+import javax.swing.JCheckBox;
+import javax.swing.JTextField;
+
+public abstract class Sensor extends JPanel {
+
+	public static final String SEP = "||";
+
+	private static final long serialVersionUID = 5615623265568564798L;
+
+	private String name;
+	private String id;
+	private String sensorName;
+	private boolean isTurnedOn = false;
+	private String inputType = "0";
+	private String input = "0";
+	private String output = "0";
+	private JCheckBox selected;
+
+	private Timer timer;
+
+	private JPanel guiPanel;
+	private JButton switchButton;
+	private JTextField inputField;
+	private JButton sendBtn;
+	private String sensorFile;
+	private JPanel panel_2;
+	private JButton btnNewButton;
+
+	public Sensor(String id, String sensorName, String inputType, String name) throws IOException {
+
+		setName(name);
+		setInputType(inputType);
+		setId(id);
+		sensorFile = ClaireSDK.settings.getSrcPath() + "sensor/#" + id + ".sensor";
+		setSensorName(sensorName);
+		loadGui();
+		save();
+		update();
+	}
+
+	public void hideInput() {
+		inputField.setVisible(false);
+		sendBtn.setVisible(false);
+	}
+
+	public void save() {
+		File file = new File(sensorFile);
+		try {
+			file.createNewFile();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(sensorFile));
+			bw.write(id + SEP + isTurnedOn + SEP + inputType + SEP + input + SEP + output);
+			bw.close();
+		} catch (IOException err) {
+			err.printStackTrace();
+			ClaireSDK.app.getTerminal()
+					.append("Error, unable to save information about sensor: " + file.getAbsolutePath());
+			ClaireSDK.app.getTerminal().printException(err);
+		}
+	}
+
+	public void update() throws IOException {
+		File f = new File(ClaireSDK.settings.getSrcPath() + "sensor/#" + id + ".sensor");
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					Scanner s = new Scanner(f);
+					String line = s.next();
+					StringTokenizer st = new StringTokenizer(line, SEP, true);
+					while(st.hasMoreTokens()) {
+						System.out.println(st.nextToken().trim());
+					}
+					id = st.nextToken().trim();
+					isTurnedOn = Boolean.valueOf(st.nextToken().trim());
+					inputType = st.nextToken().trim();
+					input = st.nextToken().trim();
+					output = st.nextToken().trim();
+					s.close();
+					java.awt.EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							updateBtn();
+							updateGui();
+							revalidate();
+							repaint();
+						}
+					});
+				} catch (Exception err) {
+				}
+			}
+
+		}, 0, ClaireSDK.settings.refreshRate);
+	}
+
+	public void destroy() {
+		timer.cancel();
+		timer.purge();
+	}
+
+	private void updateBtn() {
+		if (isTurnedOn()) {
+			switchButton.setForeground(Color.GREEN.darker());
+			switchButton.setText("ON");
+		} else {
+			switchButton.setForeground(Color.RED.darker());
+			switchButton.setText("OFF");
+		}
+	};
+
+	public void loadGui() {
+		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, ClaireSDK.settings.bkgc2));
+		setBackground(ClaireSDK.settings.bkgc1);
+		setOpaque(false);
+
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[] { 130, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 37, 0 };
+		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
+		setLayout(gridBagLayout);
+
+		guiPanel = new JPanel();
+		guiPanel.setBackground(ClaireSDK.settings.bkgc1);
+		guiPanel.setOpaque(false);
+		guiPanel.setLayout(null);
+		GridBagConstraints gbc_guiPanel = new GridBagConstraints();
+		gbc_guiPanel.insets = new Insets(0, 0, 0, 5);
+		gbc_guiPanel.fill = GridBagConstraints.BOTH;
+		gbc_guiPanel.gridx = 0;
+		gbc_guiPanel.gridy = 0;
+		add(guiPanel, gbc_guiPanel);
+
+		JPanel panel = new JPanel();
+		panel.setBackground(ClaireSDK.settings.bkgc1);
+		panel.setOpaque(false);
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 1;
+		gbc_panel.gridy = 0;
+		add(panel, gbc_panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[] { 0, 0 };
+		gbl_panel.rowHeights = new int[] { 35, 0, 30, 0, 0 };
+		gbl_panel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		panel.setLayout(gbl_panel);
+
+		JLabel nameLabel = new JLabel(name + ": " + sensorName, JLabel.CENTER);
+		nameLabel.setOpaque(true);
+		nameLabel.setBackground(ClaireSDK.settings.bkgc2);
+		nameLabel.setForeground(ClaireSDK.settings.plainText);
+		nameLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+		GridBagConstraints gbc_NameLabel = new GridBagConstraints();
+		gbc_NameLabel.fill = GridBagConstraints.BOTH;
+		gbc_NameLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_NameLabel.gridx = 0;
+		gbc_NameLabel.gridy = 0;
+		panel.add(nameLabel, gbc_NameLabel);
+
+		JLabel idLabel = new JLabel(id);
+		idLabel.setForeground(ClaireSDK.settings.plainText);
+		idLabel.setFont(new Font("Helvetica Neue", Font.PLAIN, 13));
+		GridBagConstraints gbc_IdLabel = new GridBagConstraints();
+		gbc_IdLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_IdLabel.gridx = 0;
+		gbc_IdLabel.gridy = 1;
+		panel.add(idLabel, gbc_IdLabel);
+		
+		panel_2 = new JPanel();
+		panel_2.setBackground(ClaireSDK.settings.bkgc2);
+		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
+		gbc_panel_2.insets = new Insets(0, 0, 0, 0);
+		gbc_panel_2.fill = GridBagConstraints.BOTH;
+		gbc_panel_2.gridx = 0;
+		gbc_panel_2.gridy = 2;
+		panel.add(panel_2, gbc_panel_2);
+		
+				switchButton = new JButton("OFF");
+				panel_2.add(switchButton);
+				switchButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (isTurnedOn()) {
+							turnOff();
+						} else {
+							turnOn();
+						}
+					}
+				});
+				switchButton.setForeground(new Color(178, 34, 34));
+				
+				btnNewButton = new JButton("Connect");
+				btnNewButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						connect();
+					}
+				});
+				panel_2.add(btnNewButton);
+				switchButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+					}
+				});
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(ClaireSDK.settings.bkgc1);
+		panel_1.setOpaque(false);
+		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
+		gbc_panel_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_panel_1.gridx = 0;
+		gbc_panel_1.gridy = 3;
+		panel.add(panel_1, gbc_panel_1);
+
+		inputField = new JTextField();
+		inputField.setToolTipText("input");
+		inputField.setForeground(Color.BLACK);
+		inputField.setBackground(Color.LIGHT_GRAY);
+		inputField.setFont(new Font("Courier New", Font.PLAIN, 13));
+		panel_1.add(inputField);
+		inputField.setColumns(10);
+
+		sendBtn = new JButton("Send");
+		sendBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				send();
+			}
+		});
+		panel_1.add(sendBtn);
+
+		selected = new JCheckBox("Select");
+		selected.setFont(new Font("Helvetica Neue", Font.PLAIN, 13));
+		selected.setForeground(ClaireSDK.settings.plainText);
+		panel_1.add(selected);
+	}
+
+	private void send() {
+		if (inputField.getText().isEmpty()) {
+			setInput("0");
+		} else {
+			setInput(inputField.getText());
+		}
+		inputField.setText("");
+	}
+
+	public String getSensorName() {
+		return sensorName;
+	}
+
+	public void setSensorName(String name) {
+		this.sensorName = name;
+	}
+
+	public abstract void updateGui();
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void turnOff() {
+		try {
+			ClaireSDK.app.getTerminal().print("Turning off sensor: " + id);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(sensorFile));
+			bw.write(id + SEP + "false" + SEP + inputType + SEP + input + SEP + output);
+			bw.close();
+			ClaireSDK.app.getTerminal().append(" ... Done");
+		} catch (IOException e) {
+			ClaireSDK.app.getTerminal().printException(e);
+		}
+	}
+
+	public boolean isTurnedOn() {
+		return isTurnedOn;
+	}
+
+	public void turnOn() {
+		try {
+			ClaireSDK.app.getTerminal().print("Turning on sensor: " + id);
+			BufferedWriter bw = new BufferedWriter(new FileWriter(sensorFile));
+			bw.write(id + SEP + "true" + SEP + inputType + SEP + input + SEP + output);
+			bw.close();
+			ClaireSDK.app.getTerminal().append(" ... Done");
+		} catch (IOException e) {
+			ClaireSDK.app.getTerminal().printException(e);
+		}
+	}
+
+	public String getInput() {
+		return input;
+	}
+
+	public void setInput(String input) {
+		ClaireSDK.app.getTerminal().print("Sending input: " + input + " to sensor: " + id);
+		writeInput(input);
+		ClaireSDK.app.getTerminal().append(" ... Done");
+	}
+
+	public void writeInput(String input) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(sensorFile));
+			bw.write(id + SEP + isTurnedOn + SEP + inputType + SEP + input + SEP + output);
+			bw.close();
+		} catch (IOException e) {
+			ClaireSDK.app.getTerminal().printException(e);
+		}
+
+	}
+
+	public String getOutput() {
+		return output;
+	}
+
+	public void setOutput(String output) {
+		ClaireSDK.app.getTerminal().print("Sending output: " + output + " to sensor: " + id);
+		writeOutput(output);
+		ClaireSDK.app.getTerminal().append(" ... Done");
+	}
+
+	public void writeOutput(String output) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(sensorFile));
+			bw.write(id + SEP + isTurnedOn + SEP + inputType + SEP + input + SEP + output);
+			bw.close();
+		} catch (IOException e) {
+			ClaireSDK.app.getTerminal().printException(e);
+		}
+
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public JPanel getGuiPanel() {
+		return guiPanel;
+	}
+
+	public void setGuiPanel(JPanel guiPanel) {
+		this.guiPanel = guiPanel;
+	}
+
+	public boolean isSelected() {
+		return selected.isSelected();
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected.setSelected(selected);
+	}
+
+	@Override
+	public String toString() {
+		return sensorName;
+	}
+
+	public String getInputType() {
+		return inputType;
+	}
+
+	public void setInputType(String inputType) {
+		this.inputType = inputType;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public static int sensorCount = 1;
+	
+	public void connect() {
+		ClaireSDK.app.getCurrentCodeTab().getTp().setText(ClaireSDK.app.getCurrentCodeTab().getTp().getText() + "connect device" + sensorCount + " #" + id + ";\n");
+		sensorCount++;
+	}
+
+}

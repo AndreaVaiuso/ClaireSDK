@@ -97,13 +97,14 @@ public abstract class Sensor extends JPanel {
 			public void run() {
 				try {
 					Scanner s = new Scanner(f);
-					String line = s.next();
+					String line = s.nextLine();
 					StringTokenizer st = new StringTokenizer(line, SEP);
-					id = st.nextToken();
-					isTurnedOn = Boolean.valueOf(st.nextToken());
-					inputType = st.nextToken();
-					input = st.nextToken();
-					output = st.nextToken();
+					id = st.nextToken(SEP);
+					isTurnedOn = Boolean.valueOf(st.nextToken(SEP));
+					inputType = st.nextToken(SEP);
+					input = st.nextToken(SEP);
+					output = st.nextToken(SEP);
+					
 					s.close();
 					java.awt.EventQueue.invokeLater(new Runnable() {
 						public void run() {
@@ -114,7 +115,6 @@ public abstract class Sensor extends JPanel {
 						}
 					});
 				} catch (Exception err) {
-
 				}
 			}
 
@@ -323,7 +323,6 @@ public abstract class Sensor extends JPanel {
 		ClaireSDK.app.getTerminal().print("Sending input: " + input + " to sensor: " + id);
 		writeInput(input);
 		ClaireSDK.app.getTerminal().append(" ... Done");
-
 	}
 
 	public void writeInput(String input) {
