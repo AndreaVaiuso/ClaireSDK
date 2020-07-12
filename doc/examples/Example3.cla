@@ -1,0 +1,27 @@
+connect display #FDX2PD;
+connect temp #4ZGIXC;
+connect condizionatore #ZLWB86;
+connect termosifone #OFYDMW;
+
+function gestisciClima(ctr) is
+	ctr?
+		if 3, condizionatore.output is 1; termosifone.output is 0;
+		endif;
+		if 2, condizionatore.output is 0; termosifone.output is 0;
+		endif;
+		if 1, condizionatore.output is 0; termosifone.output is 1;
+		endif;
+	end;
+end;
+
+update is
+	t is temp.output;
+	ctr;
+	if t <= 17, display.input is "Freddo_temp:" + t + "C"; ctr is 1;
+	end;
+	if t > 17 and t < 27, display.input is "Mite_temp:" + t + "C"; ctr is 2;
+	end;
+	if t >= 27, display.input is "Caldo_temp:" + t + "C"; ctr is 3;
+	end;
+	gestisciClima(ctr);
+repeat 2;

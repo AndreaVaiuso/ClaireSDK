@@ -1,0 +1,5 @@
+connect disp #ABQI50;
+
+update is
+	disp.input is "Hello_World";
+end;

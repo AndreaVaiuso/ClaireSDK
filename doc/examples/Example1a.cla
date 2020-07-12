@@ -1,0 +1,3 @@
+update is
+	print("Hello World");
+end;

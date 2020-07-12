@@ -1,0 +1,11 @@
+connect prox #RHF10Y;
+connect brake #B063EA;
+connect display #B7KQ5G;
+
+update is
+	dist is prox.input;
+	if dist<3, display.input is "BREAK"; break.output is 1; end;
+	if dist>=3 and dist<5, display.input is "WARNING";
+		brake.output is 0; end;
+	if dist>5, display.input is "GO"; brake.output is 0; end;
+repeat 0.1;
