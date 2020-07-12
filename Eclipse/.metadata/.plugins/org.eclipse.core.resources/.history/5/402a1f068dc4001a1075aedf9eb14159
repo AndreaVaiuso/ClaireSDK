@@ -39,11 +39,13 @@ public class ClaireSDK {
 			        final Image image = Toolkit.getDefaultToolkit().getImage(Application.class.getResource("/resources/Logo.png"));
 			        final Taskbar taskbar = Taskbar.getTaskbar(); 
 		            taskbar.setIconImage(image);
-		            UIManager.setLookAndFeel(
-		                    UIManager.getSystemLookAndFeelClassName());
 		        } catch (final UnsupportedOperationException e) {
+		            System.out.println("The os does not support: 'taskbar.setIconImage'");
 		        } catch (final SecurityException e) {
-		        } catch (Exception e) {}
+		            System.out.println("There was a security exception for: 'taskbar.setIconImage'");
+		        } catch (Exception e) {
+		        	
+		        }
 		        UIManager.put("TabbedPane.contentOpaque", false);
 		        app = new Application();
 				app.getFrame().setVisible(true);

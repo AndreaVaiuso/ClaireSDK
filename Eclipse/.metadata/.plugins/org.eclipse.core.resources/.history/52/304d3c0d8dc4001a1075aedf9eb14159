@@ -39,8 +39,6 @@ public class ClaireSDK {
 			        final Image image = Toolkit.getDefaultToolkit().getImage(Application.class.getResource("/resources/Logo.png"));
 			        final Taskbar taskbar = Taskbar.getTaskbar(); 
 		            taskbar.setIconImage(image);
-		            UIManager.setLookAndFeel(
-		                    UIManager.getSystemLookAndFeelClassName());
 		        } catch (final UnsupportedOperationException e) {
 		        } catch (final SecurityException e) {
 		        } catch (Exception e) {}
