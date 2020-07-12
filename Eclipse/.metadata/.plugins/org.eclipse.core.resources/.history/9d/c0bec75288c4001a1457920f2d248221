@@ -163,6 +163,7 @@ public class Settings implements Serializable{
 		    ois.close();
 		    return s;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new Settings();
 		}
 	}
