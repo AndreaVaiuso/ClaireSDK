@@ -7,6 +7,7 @@ void tfree(AST* ast){
     free(ast);
 }
 
+
 AST* eval(AST* in){
     AST* retrvalue = (AST*) malloc(sizeof(AST));
     switch(in->nodetype){
@@ -122,7 +123,7 @@ AST* eval(AST* in){
                 for(int j=0;j<i;j++){
                     if(valptr == NULL){
                         char siz[10];
-                        sprintf(&siz, "%d", coll->size);
+                        sprintf(siz, "%d", coll->size);
                         yyerror("Collection index out of bounds for variable: ",symbol->name," of size: ",siz);
                         exit(1);
                     }
@@ -503,6 +504,14 @@ AST* eval(AST* in){
                     }
                     break;
                 }
+                case UNDEF: {
+                    if(b->fname == 0){
+                        printf(">>Undefined\n");
+                    } if(b->fname == 1){
+                        return newfloat(0.0);
+                    }
+                    break;
+                }
                 default: {
                     if(b->fname == 0){
                         yyerror("Trying to print incompatible type");
@@ -520,6 +529,7 @@ AST* eval(AST* in){
             char* fname = s->name;
             s = findsymbol(fname);
             FUNCTION* f = s->func;
+            scopelimit = stackindex;
             nextscope(s->fsymhash);
             VARLIST* ptrdummy = (VARLIST*) in->right;
             SYMLIST* ptrsymlist = (SYMLIST*) f->namelist;
@@ -540,12 +550,15 @@ AST* eval(AST* in){
                 yyerror("Too many arguments for function: ", fname);
                 exit(1);
             }
-            if((retrvalue = eval(f->instructions))->nodetype == RETURN){
+            retrvalue = eval(f->instructions);
+            if(retrvalue->nodetype == RETURN){
                 prevscope();
+                scopelimit = 0;
                 return retrvalue->left;
             }
             prevscope();
             retrvalue = newast(UNDEF,NULL,NULL);
+            scopelimit = 0;
             break;
         }
         case UPDATEDEF: {
@@ -629,6 +642,7 @@ AST* eval(AST* in){
                 while(((LBOOLEAN*) res)->value != 0){
                     retrvalue = eval(in->right);
                     if(retrvalue->nodetype == BREAK){
+                        retrvalue = newast(UNDEF,NULL,NULL);
                         break;
                     }
                     res = eval(in->left);
@@ -638,6 +652,7 @@ AST* eval(AST* in){
                 while(((LNUM*) res)->value){
                     retrvalue = eval(in->right);
                     if(retrvalue->nodetype == BREAK){
+                        retrvalue = newast(UNDEF,NULL,NULL);
                         break;
                     }
                     res = eval(in->left);
@@ -653,6 +668,7 @@ AST* eval(AST* in){
                 do {
                     retrvalue = eval(in->right);
                     if(retrvalue->nodetype == BREAK){
+                        retrvalue = newast(UNDEF,NULL,NULL);
                         break;
                     }
                     res = eval(in->left);
@@ -663,6 +679,7 @@ AST* eval(AST* in){
                 do {
                     retrvalue = eval(in->right);
                     if(retrvalue->nodetype == BREAK){
+                        retrvalue = newast(UNDEF,NULL,NULL);
                         break;
                     }
                     res = eval(in->left);

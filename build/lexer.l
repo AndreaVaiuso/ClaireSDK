@@ -95,7 +95,6 @@ function" "[a-zA-Z][a-zA-Z0-9_]* {
     char* fname = strtok(NULL," ");
     strcat(fname,"()");
     SYMBOL* f = newfuncref(lookup(fname));
-    FUNCTION* fun = (FUNCTION*) f->func;
     nextscope(f->fsymhash);
     yylval.symbol = f;
     return FIDENTIFIER;

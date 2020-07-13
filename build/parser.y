@@ -54,7 +54,7 @@ root: codeblock updatedef {
     }
 ;
 
-codeblock: {;}
+codeblock: { $$ = NULL; }
 | codeblock statement SEMICOLON { 
     if($1 == NULL){
         $$ = $2;
@@ -62,7 +62,8 @@ codeblock: {;}
     }
 ;
 
-functionconstruct: FIDENTIFIER OP namelist CP ASSIGN codeblock END { $$ = newfunc($1,(AST*)$3,$6,NULL); prevscope(); }
+functionconstruct: FIDENTIFIER OP namelist CP ASSIGN codeblock END { 
+    $$ = newfunc($1,(AST*)$3,$6,NULL); prevscope(); }
 | FIDENTIFIER OP CP ASSIGN codeblock END { $$ = newfunc($1,NULL,$5,NULL); prevscope(); }
 ;
 
@@ -167,8 +168,8 @@ varlist: expression { $$ = newvarlist($1,NULL); }
 | expression COMMA varlist { $$ = newvarlist($1,$3); }
 ;
 
-namelist: IDENTIFIER { $$ = newsymlist(findsymbol($1),NULL); }
-| IDENTIFIER COMMA namelist { $$ = newsymlist(findsymbol($1),$3); }
+namelist: IDENTIFIER { $$ = newsymlist(lookup($1),NULL); }
+| IDENTIFIER COMMA namelist { $$ = newsymlist(lookup($1),$3); }
 ;
 
 term: refvar { $$ = $1; }

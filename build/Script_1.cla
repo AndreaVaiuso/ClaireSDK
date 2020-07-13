@@ -1,8 +1,8 @@
-connect d1 #02BTI8;
-connect d2 #5K7MMK;
-collection c is {d1,d2};
+connect x #1S8147;
+connect y #OI0DYT;
+
+collection c is {x,y};
 
 update is
-    x[11] is 9;
+    
 end;
-

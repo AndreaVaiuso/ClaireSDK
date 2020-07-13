@@ -1,5 +1,6 @@
 SYMBOL* scopestack[SCOPESIZE];
 int stackindex = 0;
+int scopelimit = 0;
 
 static unsigned hashf(char *sym){
     unsigned int hash = 0;
@@ -14,6 +15,7 @@ void prevscope(){
         stackindex = 0;
     }
 }
+
 
 SYMBOL* newscope(){
     return (SYMBOL*) malloc(HEAPSIZE*sizeof(SYMBOL));
@@ -49,12 +51,19 @@ SYMBOL* glookup(char* name, int currentindex){
         stackindex = currentindex;
         return s;
     } else {
-        if(stackindex > 0){
+        if(stackindex > scopelimit + 1){
             prevscope();
             return glookup(name,currentindex);
         } else {
-            stackindex = currentindex;
-            return lookup(name);
+            stackindex = 0;
+            if(lookupverif(name)){
+                SYMBOL* sym = lookup(name);
+                stackindex = currentindex;
+                return sym;
+            } else {
+                stackindex = currentindex;
+                return lookup(name);
+            }
         }
     }
 }

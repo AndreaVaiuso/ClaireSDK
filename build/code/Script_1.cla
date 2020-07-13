@@ -1,25 +1,4 @@
-connect light1 #5J8G4Z;
-connect light2 #REYZ2G;
-connect light3 #U8I4Y5;
-connect tv #OI0DYT;
-connect prox #05PFSS;
-
-collection salotto is {tv,light2};
-collection luci is {light1,light2,light3};
-
-function turnoffall(lights) is
-	i is 0;
-	while i < size(lights) do
-		lights[i].input is 0;
-		increase i by 1;
-	repeat;
-end;
-
+connect device1 #1S8147;
 update is
-	if prox.output = 1, 
-		tv.output is 1;
-		light2.input is 1;
-	else turnoffall(luci); tv.output is 0;
-	end;
-repeat;
-
+	print(device1.output);
+end;
