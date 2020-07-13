@@ -153,7 +153,12 @@ VARLIST* newvarlist(AST* value, VARLIST* next){
     VARLIST* vl = (VARLIST*) malloc(sizeof(VARLIST));
     if(vl != NULL) {
         vl->nodetype = LIST;
-        vl->value = value;
+        if(value->nodetype == IDENTIFIER){
+            vl->value = value;
+        } else {
+            vl->value = eval(value);
+        }
+        
         vl->next = next;
         return vl;
     }

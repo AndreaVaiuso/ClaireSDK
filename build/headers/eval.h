@@ -85,7 +85,7 @@ AST* eval(AST* in){
                     return (AST*) symref;
                 }
                 
-                return valptr->value;
+                return eval(valptr->value);
             }
             break;
         }
@@ -294,7 +294,9 @@ AST* eval(AST* in){
             if(l->nodetype == NUMBER){
                 LNUM* nl = (LNUM*) l;
                 retrvalue = newfloat(-(nl->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {
+                printf("NODETYPE: %d\n",l->nodetype);
+                yyerror("Operation not allowed");exit(1);}
             break;
         }
         case AND: {
@@ -391,7 +393,9 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newboolean((nl->value) < (nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {
+                printf("NODETYPE: %d - %d\n",r->nodetype,MIN);
+                yyerror("Operation not allowed");exit(1);}
             break;
         }
         case GT: {

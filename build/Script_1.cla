@@ -1,8 +1,24 @@
-connect x #1S8147;
-connect y #OI0DYT;
-
-collection c is {x,y};
+collection c is {4,-6,5,8,11,43,1,0,3,345,44,115,33,777,34};
+function bubblesort(c) is
+    exg is 1;
+    while exg = 1 do
+        exg is 0;
+        i is 0;
+        while i < (size(c) - 1) do
+            if c[i] > c[i+1],
+                exg is 1;
+                tmp is c[i];
+                c[i] is c[i+1];
+                c[i+1] is tmp;
+            end;
+            increase i by 1;
+        repeat;
+    repeat;
+    return c;
+end;
 
 update is
-    
+    bubblesort(c);
+    print(c);
+    print(0.005+"s");
 end;
