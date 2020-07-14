@@ -17,11 +17,11 @@ end;
 update is
 	t is temp.output;
 	ctr;
-	if t <= 17, display.input is "Freddo_temp:" + t + "C"; ctr is 1;
-	end;
-	if t > 17 and t < 27, display.input is "Mite_temp:" + t + "C"; ctr is 2;
-	end;
-	if t >= 27, display.input is "Caldo_temp:" + t + "C"; ctr is 3;
-	end;
+	if t <= 17, display.input is "Freddo_t:" + t + "C"; ctr is 1;
+	endif; end;
+	if t > 17 and t < 27, display.input is "Mite_t:" + t + "C"; ctr is 2;
+	endif; end;
+	if t >= 27, display.input is "Caldo_t:" + t + "C"; ctr is 3;
+	endif; end;
 	gestisciClima(ctr);
 repeat 2;

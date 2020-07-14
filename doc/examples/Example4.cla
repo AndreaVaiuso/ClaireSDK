@@ -15,10 +15,10 @@ function turnofall(lights) is
 	repeat;
 end;
 
-updte is
+update is
 	if prox.output = 1,
 		tv.output is 1;
-		light2.input is 1;
+		light2.input is 1; endif;
 	else turnofall(luci); tv.output is 0;
 	end;
 repeat;

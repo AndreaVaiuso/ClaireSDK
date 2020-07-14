@@ -725,6 +725,7 @@ AST* eval(AST* in){
                     nextscope((SYMBOL*) flow->symhash);
                     retrvalue = eval(flow->els);
                     prevscope();
+                    doelse = 0;
                 }
             }
             break;

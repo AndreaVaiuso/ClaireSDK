@@ -71,14 +71,14 @@ functionconstruct: FIDENTIFIER OP namelist CP ASSIGN codeblock END {
 
 statement: conditionalconstruct { $$ = $1; }
 | conditionalouterstat END { $$ = newflow(NULL,$1,NULL,NULL); }
-| conditionalouterstat ELSE codeblock END { $$ = newflow(NULL,$1,$3,$2); }
+| conditionalouterstat ELSE codeblock END { $$ = newflow(NULL,$1,$3,$2); prevscope(); }
 | loopconstruct { $$ = $1; }
 | expression { $$ = $1; }
 | functionconstruct { $$ = $1; }
 ;
 
 conditionalconstruct: expression QM conditionallist END { $$ = newflow($1,$3,NULL,NULL); }
-| expression QM conditionallist ELSE codeblock END { $$ = newflow($1,$3,$5,$4);   prevscope();  }
+| expression QM conditionallist ELSE codeblock END { $$ = newflow($1,$3,$5,$4); prevscope();  }
 ;
 
 conditionallist: conditionalstat  { $$ = newast(IFLIST,$1,NULL); }
@@ -91,7 +91,7 @@ conditionalstat: IF expression COMMA codeblock ENDIF SEMICOLON {
     }
 ;
 
-conditionalouterstat: IF booleanop COMMA codeblock {
+conditionalouterstat: IF booleanop COMMA codeblock ENDIF SEMICOLON {
     $$ = newastscope(IF,$2,$4,$1); 
     prevscope();
     }
