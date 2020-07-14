@@ -1139,7 +1139,6 @@ YY_RULE_SETUP
     char* fname = strtok(NULL," ");
     strcat(fname,"()");
     SYMBOL* f = newfuncref(lookup(fname));
-    FUNCTION* fun = (FUNCTION*) f->func;
     nextscope(f->fsymhash);
     yylval.symbol = f;
     return FIDENTIFIER;
@@ -1147,7 +1146,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 104 "lexer.l"
+#line 103 "lexer.l"
 {
     yylval.symbolname = strdup(yytext);
     return IDENTIFIER;
@@ -1155,7 +1154,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 109 "lexer.l"
+#line 108 "lexer.l"
 {
     yylval.ast = newfloat(atof(yytext));
     return NUMBER;
@@ -1164,11 +1163,12 @@ YY_RULE_SETUP
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 114 "lexer.l"
+#line 113 "lexer.l"
 {
     char delim[] = "\"";
     char* ptr = strtok(yytext,delim);
-    yylval.ast = newstring(ptr);
+    if(ptr==NULL) yylval.ast = newstring("");
+    else yylval.ast = newstring(ptr);
     return STRING;
 }
 	YY_BREAK

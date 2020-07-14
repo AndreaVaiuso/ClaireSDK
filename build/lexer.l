@@ -113,7 +113,8 @@ function" "[a-zA-Z][a-zA-Z0-9_]* {
 \"[^\"]*\" {
     char delim[] = "\"";
     char* ptr = strtok(yytext,delim);
-    yylval.ast = newstring(ptr);
+    if(ptr==NULL) yylval.ast = newstring("");
+    else yylval.ast = newstring(ptr);
     return STRING;
 }
 

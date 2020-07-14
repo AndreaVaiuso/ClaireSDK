@@ -1,5 +1,21 @@
-connect x #1234;
 update is
-	print("Hello");
-	print("Hello world");
+
+   i is 0;
+
+   x is 5;
+
+ 
+
+   while i < 3 do
+
+        y is 10;
+
+        print("Blocco While--> x: " + x + ", y: " + y);
+	increase i by 1;
+   repeat;
+
+ 
+
+   print("update--> y: " + y);
+
 end;
