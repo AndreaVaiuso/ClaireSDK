@@ -49,7 +49,9 @@
 %%
 //PRODUZIONI
 root: codeblock updatedef {
-    eval($1);
+    if($1 != NULL){
+        eval($1);
+    }
     eval($2);
     }
 ;

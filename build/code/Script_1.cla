@@ -1,4 +1,5 @@
-connect device1 #1S8147;
+connect x #1234;
 update is
-	print(device1.output);
+	print("Hello");
+	print("Hello world");
 end;
