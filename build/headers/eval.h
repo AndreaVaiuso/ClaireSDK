@@ -253,7 +253,12 @@ AST* eval(AST* in){
             if(l->nodetype == NUMBER && r->nodetype == NUMBER){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
-                retrvalue = newfloat((nl->value)/(nr->value));
+                if(nr->value != 0){
+                    retrvalue = newfloat((nl->value)/(nr->value));
+                } else {
+                    yyerror("Zero division error");
+                }
+                
             } else {yyerror("Operation not allowed");exit(1);}
             break;
         }

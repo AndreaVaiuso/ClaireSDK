@@ -230,7 +230,11 @@ AST* newbinfunc(AST* in, int func){
 
 int main(int argc, char* argv[]){
     char *user = getenv("USER");
+    #ifdef __linux__
+    asprintf(&PATH,"/home/%s/ClaireSDK/",user);
+    #else
     asprintf(&PATH,"/Users/%s/ClaireSDK/",user);
+    #endif
     scopestack[0] = symhash;
     FILE* input = fopen(argv[1],"r");
     setInput(input);
