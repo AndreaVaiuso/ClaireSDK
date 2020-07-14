@@ -89,20 +89,20 @@ public class CodePane extends JScrollPane {
 			private void coloring(String text,int l, int r) {
 				String tx = text.substring(l,r); 
 
-				if (tx.matches("(\\W)?(function|connect|if|else|while|end|repeat|do|collection|increase|decrease|endif)")) {
+				if (tx.matches("(\\W)?(if|else|while|end|repeat|do|increase|decrease|by|endif)")) {
 					setCharacterAttributes(l, r - l, kw1, false);
 				} 
-				else if (tx.matches("(\\W)?(return|is|break|\\?)")) {
+				else if (tx.matches("(\\W)?(collection|function|connect|return|is|break|\\?)")) {
 					setCharacterAttributes(l, r - l, kw2, false);
 				}
 				else if (tx.matches("(\\W)?^#[A-Z0-9]+")) {
-					setCharacterAttributes(l+1, r - l, deviceid, false);
+					setCharacterAttributes(l, r - l, deviceid, false);
 				}
 				else if (tx.matches("(\\W)?(yes|no)")) {
-					setCharacterAttributes(l+1, r - l, booleans, false);
+					setCharacterAttributes(l, r - l, booleans, false);
 				}
 				else if (tx.matches("(\\W)?[0-9]+\\.?[0-9]*")) {
-					setCharacterAttributes(l+1, r - l, numeric, false);
+					setCharacterAttributes(l, r - l, numeric, false);
 				}
 				else if (tx.matches("(\\W)?^\\\".*")) {
 					setCharacterAttributes(l, r - l, strings, false);

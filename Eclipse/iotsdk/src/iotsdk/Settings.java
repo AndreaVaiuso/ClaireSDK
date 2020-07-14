@@ -41,8 +41,8 @@ public class Settings implements Serializable{
 	public Color c1 = Color.BLUE.darker();
 	public Color c2 = Color.CYAN.darker();
 	public Color c3 = Color.RED.darker();
-	public Color c4 = Color.MAGENTA.darker();
-	public Color c5 = Color.YELLOW.darker();
+	public Color c4 = Color.YELLOW.darker();
+	public Color c5 = Color.MAGENTA.darker();
 	public Color c6 = Color.ORANGE.darker();
 	
 	private int fontSize = 15;
@@ -79,8 +79,8 @@ public class Settings implements Serializable{
 		c1 = Color.BLUE.darker();
 		c2 = Color.CYAN.darker();
 		c3 = Color.RED.darker();
-		c4 = Color.MAGENTA.darker();
-		c5 = Color.YELLOW.darker();
+		c4 = Color.YELLOW.darker();
+		c5 = Color.MAGENTA.darker();
 		c6 = Color.ORANGE.darker();
 	}
 	

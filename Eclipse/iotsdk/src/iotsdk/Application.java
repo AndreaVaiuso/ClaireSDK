@@ -208,7 +208,7 @@ public class Application {
 
 
 		terminalSidePanel = new JPanel();
-		tabbedPane_1.addTab("Terminal", new ImageIcon(Application.class.getResource("/resources/Terminalicon2.png")), terminalSidePanel, null);
+		tabbedPane_1.addTab("Terminal", null, terminalSidePanel, null);
 		terminalSidePanel.setBackground(ClaireSDK.settings.bkgc3);
 		GridBagLayout gbl_terminalSidePanel = new GridBagLayout();
 		gbl_terminalSidePanel.columnWidths = new int[]{0, 0};
@@ -229,7 +229,7 @@ public class Application {
 		scrollPane_terminal.setViewportView(terminal);
 
 		consoleSidePanel = new JPanel();
-		tabbedPane_1.addTab("Console", new ImageIcon(Application.class.getResource("/resources/Consoleicon2.png")), consoleSidePanel, null);
+		tabbedPane_1.addTab("Console", null, consoleSidePanel, null);
 		consoleSidePanel.setBackground(ClaireSDK.settings.bkgc3);
 		GridBagLayout gbl_consoleSidePanel = new GridBagLayout();
 		gbl_consoleSidePanel.columnWidths = new int[]{0, 0};
@@ -270,7 +270,6 @@ public class Application {
 						tmpscr.createNewFile();
 					}
 					BufferedWriter w = new BufferedWriter(new FileWriter(tmpscr));
-					System.out.println(getCode());
 					w.write(getCode());
 					w.close();
 					ProcessBuilder builder = new ProcessBuilder(ClaireSDK.settings.getSrcPath()+"build/claire", currentRunningScript);
@@ -361,7 +360,6 @@ public class Application {
 	}
 
 	public CodePane getCurrentCodeTab(){
-		System.out.println(tabbedPane.getSelectedIndex());
 		return codePanels.get(tabbedPane.getSelectedIndex());
 	}
 

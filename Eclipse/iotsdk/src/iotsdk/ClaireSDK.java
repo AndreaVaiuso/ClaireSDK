@@ -27,7 +27,6 @@ public class ClaireSDK {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				File f1 = new File(ClaireSDK.settings.getSrcPath());
-				System.out.println(f1.getAbsolutePath());
 				f1.mkdirs();
 				File f2 = new File(ClaireSDK.settings.getSrcPath()+"build");
 				if(!f2.exists()) f2.mkdirs();
