@@ -33,11 +33,11 @@ AST* eval(AST* in){
                 if(ptr->readingtype != 0){
                     if(ptr->symbol->value->nodetype != DEVICEID){
                         if(ptr->readingtype == 1){
-                            yyerror("You are trying to access output of a variable that is not a device: ", ptr->symbol->name);
+                            yyerror("You are trying to access output of a variable that is not a device: ");
                         } else {
-                            yyerror("You are trying to access input of a variable that is not a device: ", ptr->symbol->name);
+                            yyerror("You are trying to access input of a variable that is not a device: ");
                         }
-                        
+                        fprintf(stderr,"%s\n",ptr->symbol->name);
                         exit(1);
                     }
                     LDEVICE* dev = (LDEVICE*) ptr->symbol->value;
@@ -57,10 +57,17 @@ AST* eval(AST* in){
                 LNUM* ind = (LNUM*) eval(ptr->index);
                 int i = ((int) ind->value);
                 
+                if(i<0){
+                    yyerror("Index not valid for collection: ");
+                    fprintf(stderr,"%s\n",ptr->symbol->name);
+                    exit(1);
+                }
+                
                 if(ptr->symbol->value->nodetype != COLLECTION){
                     char indvalue[10];
                     sprintf(indvalue, "%d", i);
-                    yyerror("You are pointing the position ",indvalue," of variable ",ptr->symbol->name," that is not a collection");
+                    yyerror("You are pointing the position of variable that is not a collection: ");
+                    fprintf(stderr,"%s\n",ptr->symbol->name);
                     exit(1);
                 }
                 
@@ -71,9 +78,8 @@ AST* eval(AST* in){
                 
                 for(int j=0;j<i;j++){
                     if(valptr == NULL){
-                        char siz[10];
-                        sprintf(siz, "%d", coll->size);
-                        yyerror("Collection index out of bounds for variable: ",ptr->symbol->name," of size: ",siz);
+                        yyerror("Collection index out of bounds for variable: ");
+                        fprintf(stderr,"%s - size: %d\n",ptr->symbol->name,coll->size);
                         exit(1);
                     }
                     valptr = valptr->next;
@@ -110,10 +116,15 @@ AST* eval(AST* in){
                 LNUM* ind = (LNUM*) eval(ptr->ref->index);
                 int i = ((int) ind->value);
                 
+                if(i<0){
+                    yyerror("Index not valid for collection: ");
+                    fprintf(stderr,"%s\n",symbol->name);
+                    exit(1);
+                }
+                
                 if(val->nodetype != COLLECTION){
-                    char indvalue[10];
-                    sprintf(indvalue, "%d", i);
-                    yyerror("You are pointing the position ",indvalue," of variable ",symbol->name," that is not a collection");
+                    yyerror("You are pointing the position of variable that is not a collection");
+                    fprintf(stderr,"%s\n",symbol->name);
                     exit(1);
                 }
                 
@@ -122,9 +133,8 @@ AST* eval(AST* in){
                 
                 for(int j=0;j<i;j++){
                     if(valptr == NULL){
-                        char siz[10];
-                        sprintf(siz, "%d", coll->size);
-                        yyerror("Collection index out of bounds for variable: ",symbol->name," of size: ",siz);
+                        yyerror("Collection index out of bounds for variable: ");
+                        fprintf(stderr,"%s - size: %d\n",symbol->name,coll->size);
                         exit(1);
                     }
                     valptr = valptr->next;
@@ -145,10 +155,11 @@ AST* eval(AST* in){
             if(ptr->ref->readingtype != 0){
                 if(val->nodetype != DEVICEID){
                     if(ptr->ref->readingtype == 1){
-                        yyerror("You are trying to access output of a variable that is not a device: ", symbol->name);
+                        yyerror("You are trying to access output of a variable that is not a device: ");
                     } else {
-                        yyerror("You are trying to access input of a variable that is not a device: ", symbol->name);
+                        yyerror("You are trying to access input of a variable that is not a device: ");
                     }
+                    fprintf(stderr,"%s\n",symbol->name);
                     exit(1);
                 }
                 LDEVICE* dev = (LDEVICE*) val;
@@ -168,7 +179,8 @@ AST* eval(AST* in){
                         writedev(dev);
                         return retrvalue;
                     } else {
-                        yyerror("You can use only number as input/output for this device: ", symbol->name);
+                        yyerror("You can use only number as input/output for this device: ");
+                        fprintf(stderr,"%s\n",symbol->name);
                         exit(1);
                     }
                 } else {  //STRING DEVICE CASE
@@ -185,7 +197,8 @@ AST* eval(AST* in){
                         writedev(dev);
                         return retrvalue;
                     } else {
-                        yyerror("You can use only strings as input/output for this device: ", symbol->name);
+                        yyerror("You can use only strings as input/output for this device: ");
+                        fprintf(stderr,"%s\n",symbol->name);
                         exit(1);
                     }
                 }
@@ -224,7 +237,7 @@ AST* eval(AST* in){
                 asprintf(&buf,"%g",nr->value);
                 char* str1 = strdup(nl->value);
                 retrvalue = newstring(strcat(str1,buf));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case SUB: {
@@ -234,7 +247,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newfloat((nl->value)-(nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case MUL: {
@@ -244,7 +257,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newfloat((nl->value)*(nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case DIV: {
@@ -256,10 +269,11 @@ AST* eval(AST* in){
                 if(nr->value != 0){
                     retrvalue = newfloat((nl->value)/(nr->value));
                 } else {
-                    yyerror("Zero division error");
+                    yyerror("Zero division error\n");
+                    exit(1);
                 }
                 
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case INCREASE: {
@@ -270,7 +284,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newfloat((nl->value)+(nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             ref->symbol->value = retrvalue;
             break;
         }
@@ -282,7 +296,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newfloat((nl->value)-(nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             ref->symbol->value = retrvalue;
             break;
         }
@@ -291,7 +305,7 @@ AST* eval(AST* in){
             if(l->nodetype == NUMBER ){
                 LNUM* nl = (LNUM*) l;
                 retrvalue = newfloat(fabs(nl->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case MIN: {
@@ -300,8 +314,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 retrvalue = newfloat(-(nl->value));
             } else {
-                printf("NODETYPE: %d\n",l->nodetype);
-                yyerror("Operation not allowed");exit(1);}
+                yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case AND: {
@@ -324,7 +337,7 @@ AST* eval(AST* in){
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newboolean((nl->value) && (nr->value));
             }
-            else {yyerror("Operation not allowed");exit(1);}
+            else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case OR: {
@@ -346,7 +359,7 @@ AST* eval(AST* in){
                 LBOOLEAN* nl = (LBOOLEAN*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newboolean((nl->value) || (nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case EQUALS: {
@@ -399,8 +412,7 @@ AST* eval(AST* in){
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newboolean((nl->value) < (nr->value));
             } else {
-                printf("NODETYPE: %d - %d\n",r->nodetype,MIN);
-                yyerror("Operation not allowed");exit(1);}
+                yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case GT: {
@@ -410,7 +422,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newboolean((nl->value) > (nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case GE: {
@@ -420,7 +432,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newboolean((nl->value) >= (nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
         }
         case LE: {
@@ -430,7 +442,7 @@ AST* eval(AST* in){
                 LNUM* nl = (LNUM*) l;
                 LNUM* nr = (LNUM*) r;
                 retrvalue = newboolean((nl->value) <= (nr->value));
-            } else {yyerror("Operation not allowed");exit(1);}
+            } else {yyerror("Operation not allowed\n");exit(1);}
             break;
             break;
         }
@@ -440,7 +452,7 @@ AST* eval(AST* in){
             if(b->fname == 2){
                 AST* v = eval(b->input);
                 if(v->nodetype != NUMBER){
-                    yyerror("You must use numeric values in function sleep()");
+                    yyerror("You must use numeric values in function sleep()\n");
                 }
                 int sl = (int) (((LNUM*) v)->value*1000000);
                 usleep(sl);
@@ -523,7 +535,7 @@ AST* eval(AST* in){
                 }
                 default: {
                     if(b->fname == 0){
-                        yyerror("Trying to print incompatible type");
+                        yyerror("Trying to print incompatible type\n");
                     } if(b->fname == 1){
                         return newfloat(0.0);
                     }
@@ -538,6 +550,11 @@ AST* eval(AST* in){
             char* fname = s->name;
             s = findsymbol(fname);
             FUNCTION* f = s->func;
+            if(f==NULL){
+                yyerror("Calling undeclared function: ");
+                fprintf(stderr,"%s\n",fname);
+                exit(1);
+            }
             scopelimit = stackindex;
             nextscope(s->fsymhash);
             VARLIST* ptrdummy = (VARLIST*) in->right;
@@ -546,7 +563,8 @@ AST* eval(AST* in){
             if(ptrsymlist!=NULL){
                 do {
                     if(ptrdummy == NULL){
-                        yyerror("Too few arguments for function: ", fname);
+                        yyerror("Too few arguments for function: ");
+                        fprintf(stderr,"%s\n",fname);
                         exit(1);
                     }
                     ptrsymlist->value->value = eval(ptrdummy->value);
@@ -556,7 +574,8 @@ AST* eval(AST* in){
             }
             
              if(ptrdummy != NULL){
-                yyerror("Too many arguments for function: ", fname);
+                yyerror("Too many arguments for function: ");
+                fprintf(stderr,"%s\n",fname);
                 exit(1);
             }
             retrvalue = eval(f->instructions);
@@ -590,14 +609,14 @@ AST* eval(AST* in){
                 } else if(enddef->left){
                     AST* refrate = eval(enddef->left);
                     if(refrate->nodetype!=NUMBER){
-                        yyerror("Refresh rate can only be a number");
+                        yyerror("Refresh rate can only be a number\n");
                         exit(1);
                     }
                     int rr = (int) (((LNUM*) refrate)->value*1000000);
                     if(enddef->right){
                         AST* timerep = eval(enddef->right);
                         if(timerep->nodetype != NUMBER){
-                            yyerror("Repeat time can only be a number");
+                            yyerror("Repeat time can only be a number\n");
                             exit(1);
                         }
                         int times = (int) ((LNUM*) timerep)->value;

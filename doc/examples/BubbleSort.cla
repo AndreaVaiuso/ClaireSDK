@@ -1,16 +1,18 @@
 collection c is {4,-6,5,8,11,43,1,0,3,345,44,115,33,777,34};
+
 function bubblesort(c) is
-    exg is yes;
-    while exg do
-        exg is no;
+    exg is 1;
+    while exg = 1 do
+        exg is 0;
         i is 0;
         while i < (size(c) - 1) do
             if c[i] > c[i+1],
-                exg is yes;
+                exg is 1;
                 tmp is c[i];
                 c[i] is c[i+1];
                 c[i+1] is tmp;
-            endif; end;
+            endif;
+            end;
             increase i by 1;
         repeat;
     repeat;
@@ -20,5 +22,4 @@ end;
 update is
     bubblesort(c);
     print(c);
-    print(0.005+"s");
 end;

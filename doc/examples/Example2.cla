@@ -4,7 +4,7 @@ connect display #B7KQ5G;
 
 update is
 	dist is prox.input;
-	if dist<3, display.input is "BREAK"; break.output is 1; endif; end;
+	if dist<3, display.input is "BREAK"; brake.output is 1; endif; end;
 	if dist>=3 and dist<5, display.input is "WARNING";
 		brake.output is 0; endif; end;
 	if dist>5, display.input is "GO"; brake.output is 0; endif; end;

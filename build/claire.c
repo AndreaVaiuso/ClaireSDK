@@ -22,7 +22,7 @@ AST* newast(int nodetype, AST* left, AST* right){
         nast->right = right;
         return nast;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -35,7 +35,7 @@ AST* newastscope(int nodetype, AST* left, AST* right, SYMBOL* symhash){
         nast->symhash = (AST*) symhash;
         return nast;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -56,7 +56,7 @@ SYMBOL* newfuncref(SYMBOL* symbol){
         symbol->fsymhash = (SYMBOL*) malloc(HEAPSIZE*sizeof(SYMBOL));
         return symbol;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -70,7 +70,7 @@ AST* newflow(AST* exp, AST* stat, AST* els, SYMBOL* scope){
         newl->symhash = (AST*) scope;
         return (AST*) newl;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -82,7 +82,7 @@ AST* newfloat(double d){
         AST* a = (AST *) newl;
         return a;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -93,7 +93,7 @@ AST* newstring(char* s){
         newl->value = strdup(s);
         return (AST *) newl;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -105,7 +105,7 @@ AST* newboolean(int b){
         newl->value = b;
         return (AST *) newl;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -124,10 +124,11 @@ AST* newdevice(char* deviceid){
             return (AST *) newl;
         }
         fclose(ptr);
-        yyerror("Sensor doesn't exists");
+        yyerror("Sensor doesn't exists: ");
+        fprintf(stderr,"%s\n",deviceid);
         exit(1);
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -145,7 +146,7 @@ AST* newcollection(VARLIST* list){
         newl->collection = list;
         return (AST *) newl;
     }
-    yyerror("Heap space is full");
+    yyerror("Heap space is full\n");
     exit(1);
 }
 
@@ -162,7 +163,7 @@ VARLIST* newvarlist(AST* value, VARLIST* next){
         vl->next = next;
         return vl;
     }
-    yyerror("out of space");
+    yyerror("out of space\n");
     exit(0);
 }
 
@@ -174,7 +175,7 @@ SYMLIST* newsymlist(SYMBOL* value, SYMLIST* next){
         sl->next = next;
         return sl;
     }
-    yyerror("out of space");
+    yyerror("out of space\n");
     exit(0);
 }
 
@@ -186,7 +187,7 @@ AST* newasgn(SYMREF* s, AST* v) {
         newl->assignment = v;
         return (AST*) newl;
     }
-    yyerror("out of space");
+    yyerror("out of space\n");
     exit(1);
 }
 
@@ -199,7 +200,7 @@ AST* newsymasgn(SYMBOL* s, AST* v) {
         newl->assignment = v;
         return (AST*) newl;
     }
-    yyerror("out of space");
+    yyerror("out of space\n");
     exit(1);
 }
 
@@ -212,7 +213,7 @@ SYMREF* newref(SYMBOL* s, AST* index){
         a->readingtype = 0;
         return a;
     }
-    yyerror("out of space");
+    yyerror("out of space\n");
     exit(1);
 }
 
@@ -224,7 +225,7 @@ AST* newbinfunc(AST* in, int func){
         b->input = in;
         return (AST*) b;
     }
-    yyerror("out of space");
+    yyerror("out of space\n");
     exit(1);
 }
 
@@ -244,12 +245,7 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
-void yyerror(char *s, ...)
+void yyerror(char *s)
 {
-  va_list ap;
-  va_start(ap, s);
-
-  fprintf(stderr, "%d: error: ", (yylineno-1));
-  vfprintf(stderr, s, ap);
-  fprintf(stderr, "\n");
+  fprintf(stderr, "%d: error: %s", yylineno,s);
 }

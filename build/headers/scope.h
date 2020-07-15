@@ -41,7 +41,7 @@ SYMBOL* lookup(char* name){
         }
         if(++sym >= scopestack[stackindex]+HEAPSIZE) sym = scopestack[stackindex];
     }
-    yyerror("Variable's symbol table overflow");
+    yyerror("Variable's symbol table overflow\n");
     exit(1);
 }
 
@@ -76,7 +76,7 @@ int lookupverif(char* name){
         if(sym->name == NULL) return 0;
         if(++sym >= scopestack[stackindex]+HEAPSIZE) sym = scopestack[stackindex];
     }
-    yyerror("Variable's symbol table overflow");
+    yyerror("Variable's symbol table overflow\n");
     exit(1);
 }
 

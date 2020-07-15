@@ -149,6 +149,6 @@ void printcurrentsymhash();
 
 
 extern int yylineno; /* from lexer */
-void yyerror(char *s,...);
+void yyerror(char *s);
 
 void setInput(FILE* input);

@@ -1,5 +1,5 @@
-update is
-    x is 1;
-    if x=1, print("hello"); endif
+connect asd #000T2O;
 
+update is
+    asd.input is "hello";
 end;
